@@ -1,9 +1,11 @@
 package com.social.mc_account.controller;
 
 import com.social.mc_account.dto.*;
+import com.social.mc_account.service.AccountServiceImpl;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,18 +15,21 @@ import org.springframework.web.bind.annotation.*;
 @Data
 public class ApiController {
 
+    @Autowired
+    private AccountServiceImpl accountService;
+
     @GetMapping("/account")
     public ResponseEntity<AccountDataDTO> getDataAccountByEmail(String authorization, String email){
         return null;
     }
 
     @PutMapping("/account")
-    public ResponseEntity<AccountMeDTO> updateDataAccount(){
+    public ResponseEntity<AccountMeDTO> updateDataAccount(@RequestBody AccountMeDTO accountMeDTO){
         return null;
     }
 
     @PostMapping("/account")
-    public ResponseEntity<AccountMeDTO> createAccount(){
+    public ResponseEntity<AccountMeDTO> createAccount(@RequestBody AccountMeDTO accountMeDTO){
         return null;
     }
 
@@ -34,7 +39,7 @@ public class ApiController {
     }
 
     @PutMapping("/account/me")
-    public ResponseEntity<AccountMeDTO> updateDataMyAccount(String authorization){
+    public ResponseEntity<AccountMeDTO> updateDataMyAccount(@RequestBody AccountMeDTO accountMeDTO, String authorization){
         return null;
     }
 
@@ -49,13 +54,13 @@ public class ApiController {
     }
 
     @GetMapping("/account/{id}")
-    public ResponseEntity<AccountMeDTO> getDataMyAccountById(String id){
+    public ResponseEntity<AccountMeDTO> getDataMyAccountById(@PathVariable String id){
         return null;
     }
 
     @DeleteMapping("/account/{id}")
-    public Response deleteMyAccountById(String id){
-        return null;
+    public ResponseEntity<?> deleteMyAccountById(@PathVariable String id){
+        return ResponseEntity.ok().body("Account deleted");
     }
 
     @GetMapping("/account/unsupported")

@@ -1,0 +1,12 @@
+version: '3'
+services:
+  postges:
+    container_name: mc_account_db
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    restart: on-failure
+    environment:
+      POSTGRES_USER: mc_account
+      POSTGRES_PASSWORD: mc_account
+      POSTGRES_DB: account_db
