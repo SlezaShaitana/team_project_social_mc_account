@@ -14,6 +14,6 @@ public class AccountDataDTO {
     private String firstName;
     private String email;
     private String password;
-    private List<RoleDTO> roles;
+    private StatusRole roles;
     private List<AuthorityDTO> authorities;
 }

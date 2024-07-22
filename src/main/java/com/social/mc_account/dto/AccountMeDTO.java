@@ -1,6 +1,8 @@
 package com.social.mc_account.dto;
 
 import lombok.Data;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -26,7 +28,7 @@ public class AccountMeDTO {
         private boolean isOnline;
         private boolean isBlocked;
         private String emojiStatus;
-        private Date createdOn;
-        private Date updatedOn;
-        private Date deletionTimestamp;
+        private LocalDateTime createdOn;
+        private LocalDateTime updatedOn;
+        private LocalDateTime deletionTimestamp;
 }

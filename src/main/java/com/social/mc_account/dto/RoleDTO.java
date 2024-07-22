@@ -1,13 +1,16 @@
 package com.social.mc_account.dto;
 
+import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.UUID;
 
 @Data
+@Entity
+@Table(name = "roles")
 public class RoleDTO {
-    private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true)
+    private long id;
+
     private String role;
 }

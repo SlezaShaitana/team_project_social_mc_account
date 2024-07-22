@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: mc-account
+
+  jpa:
+    generate-ddl: false
+    open-in-view: true
+    ddl-auto: create
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/account_db
+    username: postgres
+    password: 1234
+    ddl-auto: create
+    show-sql: true
+    dialect: org.hibernate.dialect.PostgreSQL9Dialect
+    enabled: true
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/changelog-master.xml

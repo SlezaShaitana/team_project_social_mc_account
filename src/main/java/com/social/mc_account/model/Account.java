@@ -1,9 +1,12 @@
 package com.social.mc_account.model;
 
+import com.social.mc_account.dto.StatusRole;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -28,6 +31,10 @@ public class Account {
     private String email;
 
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusRole role;
 
     @Column(nullable = false)
     private String phone;
@@ -71,16 +78,15 @@ public class Account {
     private String emojiStatus;
 
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_on", updatable = false)
-    private Date createdOn;
+    private LocalDateTime createdOn;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "update_on")
-    private Date updateOn;
+    private LocalDateTime updatedOn;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "deletion_timestamp")
-    private Date deletionTimestamp;
+    private LocalDateTime deletionTimestamp;
 }

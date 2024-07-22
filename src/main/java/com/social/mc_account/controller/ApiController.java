@@ -1,13 +1,18 @@
 package com.social.mc_account.controller;
 
 import com.social.mc_account.dto.*;
+import com.social.mc_account.model.Account;
 import com.social.mc_account.service.AccountServiceImpl;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -19,67 +24,67 @@ public class ApiController {
     private AccountServiceImpl accountService;
 
     @GetMapping("/account")
-    public ResponseEntity<AccountDataDTO> getDataAccountByEmail(String authorization, String email){
-        return null;
+    public Account getDataAccountByEmail(@RequestHeader String authorization, String email){
+        return accountService.getDataAccount(authorization, email);
     }
 
     @PutMapping("/account")
-    public ResponseEntity<AccountMeDTO> updateDataAccount(@RequestBody AccountMeDTO accountMeDTO){
-        return null;
+    public AccountMeDTO updateDataAccount(@RequestBody AccountMeDTO accountMeDTO){
+        return accountService.updateAccount(accountMeDTO);
     }
 
     @PostMapping("/account")
-    public ResponseEntity<AccountMeDTO> createAccount(@RequestBody AccountMeDTO accountMeDTO){
-        return null;
+    public AccountMeDTO createAccount(@RequestBody AccountMeDTO accountMeDTO){
+        return accountService.createAccount(accountMeDTO);
     }
 
     @GetMapping("/account/me")
-    public ResponseEntity<AccountMeDTO> getDataMyAccount(String authorization){
-        return null;
+    public AccountMeDTO getDataMyAccount(@RequestHeader String authorization){
+        return  accountService.getDataMyAccount(authorization);
     }
 
     @PutMapping("/account/me")
-    public ResponseEntity<AccountMeDTO> updateDataMyAccount(@RequestBody AccountMeDTO accountMeDTO, String authorization){
-        return null;
+    public AccountMeDTO updateDataMyAccount(@RequestHeader String authorization){
+        return accountService.updateAuthorizeAccount(authorization);
     }
 
     @DeleteMapping("/account/me")
-    public Response deleteMyAccount(String authorization){
-        return null;
+    public void deleteMyAccount(@RequestHeader String authorization) throws InterruptedException {
+         accountService.deleteAccount(authorization);
     }
 
     @PutMapping("/account/birthdays")
-    public ResponseEntity<BirthdayDTO> putNotificationsForFriends(){
-        return null;
+    public String putNotificationsForFriends(){
+        return accountService.putNotification();
     }
 
     @GetMapping("/account/{id}")
-    public ResponseEntity<AccountMeDTO> getDataMyAccountById(@PathVariable String id){
-        return null;
+    public AccountDataDTO getDataMyAccountById(@PathVariable UUID id){
+        return accountService.getDataById(id);
     }
 
     @DeleteMapping("/account/{id}")
-    public ResponseEntity<?> deleteMyAccountById(@PathVariable String id){
-        return ResponseEntity.ok().body("Account deleted");
+    public void deleteMyAccountById(@PathVariable UUID id){
+        accountService.deleteAccountById(id);
     }
 
     @GetMapping("/account/unsupported")
-    public ResponseEntity<AccountPageDTO> getAllAccounts(SearchDTO searchDTO, Page page){
-        return null;
+    public List<AccountPageDTO> getAllAccounts(){
+        return accountService.getAllAccounts();
     }
 
     @GetMapping("/account/statistic")
-    public ResponseEntity<StatisticDTO> getStatisticAccounts(StatisticRequestDTO requestDTO){
-        return null;
+    public List<StatisticDTO> getStatisticAccounts(StatisticRequestDTO requestDTO){
+        return accountService.getStatistic();
     }
 
     @GetMapping("/account/search")
-    public ResponseEntity<AccountPageDTO> getListAccounts(SearchDTO searchDTO, PageableDTO pageableDTO){
-        return null;
+    public List<Account> getListAccounts(Account account){
+        return accountService.getListAccounts(account);
     }
 
     @GetMapping("/account/search/statusCode")
-    public ResponseEntity<AccountPageDTO> getListAccountsByStatus(SearchDTO searchDTO, PageableDTO pageableDTO){
-        return null;
+    public List<AccountPageDTO> getListAccountsByStatus(@PathVariable String statusCode){
+        return accountService.getAccountsByStatusCode(statusCode);
     }
 }

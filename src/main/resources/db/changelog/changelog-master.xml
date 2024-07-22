@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="1251515242138" author="Daniil_Tishin">
+        <createTable tableName="account">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_account"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN"/>
+            <column name="firstName" type="VARCHAR(255)"/>
+            <column name="lastName" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="phone" type="VARCHAR(255)"/>
+            <column name="photo" type="VARCHAR(255)"/>
+            <column name="profileCover" type="VARCHAR(255)"/>
+            <column name="about" type="TEXT"/>
+            <column name="city" type="VARCHAR(255)"/>
+            <column name="country" type="VARCHAR(255)"/>
+            <column name="statusCode" type="VARCHAR(255)"/>
+            <column name="regDate" type="DATE"/>
+            <column name="birthDate" type="DATE"/>
+            <column name="messagePermission" type="VARCHAR(255)"/>
+            <column name="lastOnlineTime" type="DATE"/>
+            <column name="isOnline" type="BOOLEAN"/>
+            <column name="isBlocked" type="BOOLEAN"/>
+            <column name="emojiStatus" type="VARCHAR(255)"/>
+            <column name="createOn" type="DATE"/>
+            <column name="updateOn" type="DATE"/>
+            <column name="deletionTimesStamp" type="DATE"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
