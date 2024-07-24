@@ -1,9 +1,13 @@
 package com.social.mc_account.service;
 
 import com.social.mc_account.dto.*;
+import com.social.mc_account.exception.ResourceNotFoundException;
+import com.social.mc_account.kafka.KafkaConsumer;
+import com.social.mc_account.kafka.KafkaProducer;
 import com.social.mc_account.model.Account;
 import com.social.mc_account.repository.AccountRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -17,29 +21,39 @@ import java.util.stream.Collectors;
 
 @Service
 @EnableAsync
+@Slf4j
 public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository accountRepository;
+
+    private KafkaProducer producer;
+    private KafkaConsumer consumer;
 
     @Override
     public Account getDataAccount(String authorization, String email) {
         Account account = accountRepository.findByEmail(email);
         if(account != null){
+            log.info("The account: " + account + "was successfully found by email: " + email);
             return account;
+        } else {
+            throw new ResourceNotFoundException("The account with email: " + email + " not found");
         }
-        return null;
     }
 
     @Override
     public AccountMeDTO updateAccount(AccountMeDTO accountMeDTO) {
         Optional<Account> optionalAccount = accountRepository.findById(accountMeDTO.getId());
         if (optionalAccount.isPresent()) {
+            HashMap<String, Object> updateAccount = new HashMap<>();
             Account account = optionalAccount.get();
             updateAccountFromDTO(account, accountMeDTO);
             accountRepository.save(account);
+            updateAccount.put("account", account);
+            producer.sendMessage(updateAccount);
+            log.info("The account: " + account + "was successfully update");
             return accountMeDTO;
         } else {
-            return null;
+            throw new ResourceNotFoundException("The account with id: " + accountMeDTO.getId() + " not found");
         }
     }
 
@@ -55,6 +69,7 @@ public class AccountServiceImpl implements AccountService {
         updateAccountFromDTO(account, accountMeDTO);
         accountRepository.save(account);
         accountMeDTO.setId(account.getId());
+        log.info("Account successfully created!");
         return accountMeDTO;
     }
 
@@ -64,9 +79,10 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> optionalAccount = accountRepository.findById(userId);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
+            log.info("Thea account data with id: " + account.getId() + " has been successfully received");
             return convertToAccountMeDTO(account);
         }
-        return null;
+        throw new ResourceNotFoundException("The account with id: " + authorization + " not found");
     }
 
     @Override
@@ -77,11 +93,11 @@ public class AccountServiceImpl implements AccountService {
             Account account = optionalAccount.get();
             account.setLastOnlineTime(new Date());
             account.setOnline(true);
-
             accountRepository.save(account);
+            log.info("The authorize account: " + account + " successfully updated");
             return convertToAccountMeDTO(account);
         } else {
-            return null;
+            throw new ResourceNotFoundException("The account with id: " + authorization + " not updated");
         }
     }
 
@@ -89,19 +105,17 @@ public class AccountServiceImpl implements AccountService {
     @Async
     public void deleteAccount(String authorization) throws InterruptedException {
         UUID userId = extractUserIdFromAuthorization(authorization);
-
         Optional<Account> optionalUser = accountRepository.findById(userId);
-
         if (optionalUser.isPresent()) {
             Account account = optionalUser.get();
             account.setDeleted(true);
             accountRepository.save(account);
-
+            log.info("The account with id: " + account.getId() + " successfully softly deleted");
             TimeUnit.DAYS.sleep(10);
-
             accountRepository.delete(account);
+            log.info("The account with id: " + account.getId() + " completely deleted from the database");
         } else {
-            throw new IllegalArgumentException("Account not found");
+            throw new ResourceNotFoundException("The account with id: " + authorization + " not found");
         }
     }
 
@@ -112,9 +126,11 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> optionalAccount = accountRepository.findById(userId);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
+            log.info("Notification sent to friends");
             return "Notification sent to friends of " + account.getFirstName();
+        } else {
+            throw new ResourceNotFoundException("The account with id: " + authorization + " not found");
         }
-        return "Account not found";
     }
 
     @Override
@@ -122,9 +138,10 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> optionalAccount = accountRepository.findById(id);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
+            log.info("The account with id: " + id  + " was successfully found");
             return convertToAccountDataDTO(account);
         }
-        return null;
+        throw new ResourceNotFoundException("The account with id: " + id + " not found");
     }
 
     @Override
@@ -133,33 +150,38 @@ public class AccountServiceImpl implements AccountService {
 
         if (user.isPresent()) {
             Account thisUser = user.get();
+            log.info("The account with id: " + id + "successfully deleted");
             accountRepository.delete(thisUser);
         } else {
-            throw new IllegalArgumentException("Account not found with id: " + id);
+            throw new ResourceNotFoundException("The account with id: " + id + " not found");
         }
     }
 
     @Override
     public List<AccountPageDTO> getAllAccounts() {
         List<Account> accounts = accountRepository.findAll();
+        log.info("All accounts received ");
         return accounts.stream().map(this::convertToAccountPageDTO).collect(Collectors.toList());
     }
 
     @Override
     public List<StatisticDTO> getStatistic() {
         List<StatisticDTO> statistics = new ArrayList<>();
+        log.info("statistic received");
         return statistics;
     }
 
     @Override
     public List<Account> getListAccounts(Account account) {
         List<Account> accounts = accountRepository.findAccountsById(account.getId());
+        log.info("List accounts received");
         return accounts;
     }
 
     @Override
     public List<AccountPageDTO> getAccountsByStatusCode(String statusCode) {
         List<Account> accounts = accountRepository.findByStatusCode(statusCode);
+        log.info("All account received by status code: " + statusCode);
         return accounts.stream().map(this::convertToAccountPageDTO).collect(Collectors.toList());
     }
 
