@@ -5,6 +5,7 @@ import com.social.mc_account.exception.ResourceNotFoundException;
 import com.social.mc_account.kafka.KafkaConsumer;
 import com.social.mc_account.kafka.KafkaProducer;
 import com.social.mc_account.model.Account;
+import com.social.mc_account.model.KafkaAccount;
 import com.social.mc_account.repository.AccountRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +61,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public AccountMeDTO createAccount(AccountMeDTO accountMeDTO) {
+        KafkaAccount kafkaAccount = new KafkaAccount();
+        HashMap<String, Object> kafkaMessage = new HashMap<>();
+        kafkaMessage.put("Account", kafkaAccount);
         Account account = new Account();
         if (accountMeDTO.getId() == null) {
             account.setId((UUID.randomUUID()));

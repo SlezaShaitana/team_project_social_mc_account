@@ -1,11 +1,13 @@
 version: '3.3'
 services:
+
   postgres:
     container_name: mc_account_db
     image: postgres
     ports:
       - 5433:5432
     restart: always
+
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234

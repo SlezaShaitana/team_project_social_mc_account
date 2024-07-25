@@ -2,6 +2,14 @@ spring:
   application:
     name: mc-account
 
+  kafka:
+    bootstrap-servers: localhost:9092
+
+app:
+  kafka:
+    kafkaMessageTopic: "updateTopic"
+    kafkaMessageGroupId: "account_consumer"
+
   jpa:
     generate-ddl: false
     open-in-view: true
@@ -19,3 +27,4 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/changelog-master.xml
+
