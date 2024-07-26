@@ -1,10 +1,12 @@
 package com.social.mc_account.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@Builder
 public class AccountPageDTO {
     private long totalElements;
     private int totalPages;

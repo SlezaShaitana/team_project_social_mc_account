@@ -14,8 +14,7 @@ public class KafkaProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-
     public void sendMessage(HashMap<String, Object> data){
-        kafkaTemplate.send("updateTopic", data);
+        kafkaTemplate.send("${app.kafka.kafkaMessageTopic}", data);
     }
 }

@@ -10,9 +10,8 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class KafkaConsumer {
-    @KafkaListener(topics = "registerTopic", groupId = "account_consumer")
+    @KafkaListener(topics = "registerTopic", groupId = "${app.kafka.kafkaMessageGroupId}")
     public void listen(HashMap<String, Object> data){
-        System.out.println("Received data: " + data);
         log.info("Received data: " + data);
     }
 }

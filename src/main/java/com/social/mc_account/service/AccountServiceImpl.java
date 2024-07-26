@@ -6,6 +6,7 @@ import com.social.mc_account.dto.*;
 import com.social.mc_account.exception.ResourceNotFoundException;
 import com.social.mc_account.kafka.KafkaConsumer;
 import com.social.mc_account.kafka.KafkaProducer;
+import com.social.mc_account.mapper.AccountMapper;
 import com.social.mc_account.model.Account;
 import com.social.mc_account.model.KafkaAccount;
 import com.social.mc_account.repository.AccountRepository;
@@ -31,6 +32,7 @@ public class AccountServiceImpl implements AccountService {
 
     private KafkaProducer producer;
     private KafkaConsumer consumer;
+    AccountMapper mapper = new AccountMapper();
 
     @Override
     public Account getDataAccount(String authorization, String email) {
@@ -49,7 +51,7 @@ public class AccountServiceImpl implements AccountService {
         if (optionalAccount.isPresent()) {
             HashMap<String, Object> updateAccount = new HashMap<>();
             Account account = optionalAccount.get();
-            updateAccountFromDTO(account, accountMeDTO);
+            mapper.updateAccountFromDTO(account, accountMeDTO);
             accountRepository.save(account);
             updateAccount.put("account", account);
             producer.sendMessage(updateAccount);
@@ -72,7 +74,7 @@ public class AccountServiceImpl implements AccountService {
         } else {
             account.setId(accountMeDTO.getId());
         }
-        updateAccountFromDTO(account, accountMeDTO);
+        mapper.updateAccountFromDTO(account, accountMeDTO);
         accountRepository.save(account);
         accountMeDTO.setId(account.getId());
         log.info("Account successfully created!");
@@ -86,7 +88,7 @@ public class AccountServiceImpl implements AccountService {
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             log.info("Thea account data with id: " + account.getId() + " has been successfully received");
-            return convertToAccountMeDTO(account);
+            return mapper.convertToAccountMeDTO(account);
         }
         throw new ResourceNotFoundException("The account with id: " + authorization + " not found");
     }
@@ -101,7 +103,7 @@ public class AccountServiceImpl implements AccountService {
             account.setOnline(true);
             accountRepository.save(account);
             log.info("The authorize account: " + account + " successfully updated");
-            return convertToAccountMeDTO(account);
+            return mapper.convertToAccountMeDTO(account);
         } else {
             throw new ResourceNotFoundException("The account with id: " + authorization + " not updated");
         }
@@ -145,7 +147,7 @@ public class AccountServiceImpl implements AccountService {
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             log.info("The account with id: " + id  + " was successfully found");
-            return convertToAccountDataDTO(account);
+            return mapper.convertToAccountDataDTO(account);
         }
         throw new ResourceNotFoundException("The account with id: " + id + " not found");
     }
@@ -167,7 +169,7 @@ public class AccountServiceImpl implements AccountService {
     public List<AccountPageDTO> getAllAccounts() {
         List<Account> accounts = accountRepository.findAll();
         log.info("All accounts received ");
-        return accounts.stream().map(this::convertToAccountPageDTO).collect(Collectors.toList());
+        return accounts.stream().map(mapper::convertToAccountPageDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -188,71 +190,12 @@ public class AccountServiceImpl implements AccountService {
     public List<AccountPageDTO> getAccountsByStatusCode(String statusCode) {
         List<Account> accounts = accountRepository.findByStatusCode(statusCode);
         log.info("All account received by status code: " + statusCode);
-        return accounts.stream().map(this::convertToAccountPageDTO).collect(Collectors.toList());
+        return accounts.stream().map(mapper::convertToAccountPageDTO).collect(Collectors.toList());
     }
 
 
     private UUID extractUserIdFromAuthorization(String authorization) {
         return UUID.fromString(authorization);
-    }
-
-    private AccountDataDTO convertToAccountDataDTO(Account account) {
-        AccountDataDTO dto = new AccountDataDTO();
-        dto.setId(account.getId());
-        dto.setEmail(account.getEmail());
-        dto.setPassword(account.getPassword());
-        dto.setRoles(account.getRole());
-        dto.setDeleted(account.isDeleted());
-        dto.setFirstName(account.getFirstName());
-        return dto;
-    }
-
-    private AccountMeDTO convertToAccountMeDTO(Account account) {
-        ObjectMapper objectMapper = new ObjectMapper()
-                .configure(JsonGenerator.Feature.IGNORE_UNKNOWN, );
-
-        AccountMeDTO dto = objectMapper.convertValue(account, AccountMeDTO.class);
-        return dto;
-    }
-
-    private AccountPageDTO convertToAccountPageDTO(Account account) {
-        AccountPageDTO dto = new AccountPageDTO();
-        dto.setAccountMeDTO(convertToAccountMeDTO(account));
-        dto.setTotalElements(0);
-        dto.setTotalPages(0);
-        dto.setNumberOfElements(0);
-        dto.setSortDTO(new SortDTO());
-        dto.setPageable(new PageableDTO());
-        dto.setFirst(false);
-        dto.setLast(false);
-        dto.setSize(0);
-        dto.setNumber(0);
-        dto.setEmpty(false);
-        return dto;
-    }
-
-    private void updateAccountFromDTO(Account account, AccountMeDTO accountMeDTO) {
-        account.setFirstName(accountMeDTO.getFirstName());
-        account.setLastName(accountMeDTO.getLastName());
-        account.setEmail(accountMeDTO.getEmail());
-        account.setPassword(accountMeDTO.getPassword());
-        account.setPhone(accountMeDTO.getPhone());
-        account.setPhoto(accountMeDTO.getPhoto());
-        account.setProfileCover(accountMeDTO.getProfileCover());
-        account.setAbout(accountMeDTO.getAbout());
-        account.setCity(accountMeDTO.getCity());
-        account.setCountry(accountMeDTO.getCountry());
-        account.setStatusCode(accountMeDTO.getStatusCode());
-        account.setRegDate(new Date());
-        account.setBirthDate(accountMeDTO.getBirthDate());
-        account.setMessagePermission(accountMeDTO.getMessagePermission());
-        account.setLastOnlineTime(new Date());
-        account.setOnline(false);
-        account.setBlocked(false);
-        account.setEmojiStatus(accountMeDTO.getEmojiStatus());
-        account.setUpdatedOn(LocalDateTime.now());
-        account.setDeletionTimestamp(null);
-        account.setDeleted(false);
     }
 
     private String getAuthorizationFromContext() {

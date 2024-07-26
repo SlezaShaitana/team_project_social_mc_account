@@ -2,6 +2,7 @@ package com.social.mc_account.model;
 
 import com.social.mc_account.dto.StatusRole;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import org.apache.kafka.common.protocol.types.Field;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Entity
 @Data
 @Table(name = "users")
+@Builder
 public class Account {
 
     public Account(String id, String emailAccount, String passwordAccount){
