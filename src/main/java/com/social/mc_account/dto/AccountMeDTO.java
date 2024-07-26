@@ -1,5 +1,7 @@
 package com.social.mc_account.dto;
 
+import jakarta.persistence.Transient;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -7,6 +9,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Data
+@Builder
 public class AccountMeDTO {
         private UUID id;
         private boolean isDeleted;

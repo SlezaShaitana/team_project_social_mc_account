@@ -15,30 +15,29 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/account")
 @RequiredArgsConstructor
 @Data
 public class ApiController {
 
-    @Autowired
-    private AccountServiceImpl accountService;
+    private final AccountServiceImpl accountService;
 
-    @GetMapping("/account")
+    @GetMapping
     public Account getDataAccountByEmail(@RequestHeader String authorization, String email){
         return accountService.getDataAccount(authorization, email);
     }
 
-    @PutMapping("/account")
+    @PutMapping
     public AccountMeDTO updateDataAccount(@RequestBody AccountMeDTO accountMeDTO){
         return accountService.updateAccount(accountMeDTO);
     }
 
-    @PostMapping("/account")
+    @PostMapping
     public AccountMeDTO createAccount(@RequestBody AccountMeDTO accountMeDTO){
         return accountService.createAccount(accountMeDTO);
     }
 
-    @GetMapping("/account/me")
+    @GetMapping("/me")
     public AccountMeDTO getDataMyAccount(@RequestHeader String authorization){
         return  accountService.getDataMyAccount(authorization);
     }

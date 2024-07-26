@@ -1,5 +1,7 @@
 package com.social.mc_account.service;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.social.mc_account.dto.*;
 import com.social.mc_account.exception.ResourceNotFoundException;
 import com.social.mc_account.kafka.KafkaConsumer;
@@ -206,30 +208,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private AccountMeDTO convertToAccountMeDTO(Account account) {
-        AccountMeDTO dto = new AccountMeDTO();
-        dto.setId(account.getId());
-        dto.setFirstName(account.getFirstName());
-        dto.setLastName(account.getLastName());
-        dto.setEmail(account.getEmail());
-        dto.setPassword(account.getPassword());
-        dto.setPhone(account.getPhone());
-        dto.setPhoto(account.getPhoto());
-        dto.setProfileCover(account.getProfileCover());
-        dto.setAbout(account.getAbout());
-        dto.setCity(account.getCity());
-        dto.setCountry(account.getCountry());
-        dto.setStatusCode(account.getStatusCode());
-        dto.setRegDate(account.getRegDate());
-        dto.setBirthDate(account.getBirthDate());
-        dto.setMessagePermission(account.getMessagePermission());
-        dto.setLastOnlineTime(account.getLastOnlineTime());
-        dto.setOnline(account.isOnline());
-        dto.setBlocked(account.isBlocked());
-        dto.setEmojiStatus(account.getEmojiStatus());
-        dto.setCreatedOn(account.getCreatedOn());
-        dto.setUpdatedOn(account.getUpdatedOn());
-        dto.setDeletionTimestamp(account.getDeletionTimestamp());
-        dto.setDeleted(account.isDeleted());
+        ObjectMapper objectMapper = new ObjectMapper()
+                .configure(JsonGenerator.Feature.IGNORE_UNKNOWN, );
+
+        AccountMeDTO dto = objectMapper.convertValue(account, AccountMeDTO.class);
         return dto;
     }
 
