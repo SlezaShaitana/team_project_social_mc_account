@@ -1,15 +1,13 @@
-FROM maven:3.8.6-openjdk-17-slim AS build
-WORKDIR /home/app
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
+FROM openjdk:17-jdk-alpine
 
-FROM openjdk:17.0.2-jdk-slim-buster
-LABEL maintainer="tishin"
+# Устанавливаем рабочую директорию
+WORKDIR /app
 
-# Копирование файла без использования wildcard
-COPY --from=build /home/app/target/myapp.jar /mc-account.jar
+# Копируем собранный JAR файл из предыдущего этапа
+COPY target/mc-account-0.0.1-SNAPSHOT.jar myapp.jar
 
-EXPOSE 8080
+# Открываем порт, на котором будет работать приложение
+EXPOSE 8089
 
-ENTRYPOINT ["java", "-jar", "/mc-account.jar"]
+# Запускаем приложение
+ENTRYPOINT ["java", "-jar", "myapp.jar"]

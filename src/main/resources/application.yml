@@ -6,23 +6,17 @@ spring:
     open-in-view: true
     ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5435/account_db
+    url: jdbc:postgresql://localhost:5435/database
     username: postgres
     password: postgres
     show-sql: true
     dialect: org.hibernate.dialect.PostgreSQL9Dialect
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/changelog-master.xml
 
 app:
   kafka:
     kafkaMessageTopic: "updateTopic"
     kafkaMessageGroupId: "account_consumer"
     bootstrap-servers: localhost:9092
-
-  liquibase:
-    enabled: true
-    change-log: classpath:/db/changelog/changelog-master.xml
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
