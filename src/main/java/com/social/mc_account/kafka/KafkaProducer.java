@@ -11,7 +11,7 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class KafkaProducer {
 
-    private final KafkaTemplate<String, AccountDataDTO> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
 
 
