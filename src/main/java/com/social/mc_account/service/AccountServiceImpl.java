@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @EnableAsync
 @Slf4j
 public class AccountServiceImpl implements AccountService {
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
     private KafkaProducer producer;
     private KafkaConsumer consumer;
@@ -50,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
             mapper.updateAccountFromDTO(account, accountMeDTO);
             accountRepository.save(account);
             updateAccount.put("account", account);
-            producer.sendMessage(updateAccount);
+            //producer.sendMessage(updateAccount);
             log.info("The account: {} was successfully update", account);
             return accountMeDTO;
     }

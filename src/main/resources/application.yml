@@ -4,7 +4,8 @@ spring:
   jpa:
     generate-ddl: false
     open-in-view: true
-    ddl-auto: update
+    hibernate:
+      ddl-auto: none
   datasource:
     url: jdbc:postgresql://localhost:5435/database
     username: postgres
@@ -14,9 +15,13 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/changelog-master.xml
+  kafka:
+    bootstrap-servers: localhost:9092
+
 
 app:
   kafka:
     kafkaMessageTopic: "updateTopic"
     kafkaMessageGroupId: "account_consumer"
-    bootstrap-servers: localhost:9092
+server:
+  port: 8089

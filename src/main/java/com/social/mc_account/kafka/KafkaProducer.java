@@ -1,19 +1,21 @@
 package com.social.mc_account.kafka;
 
+import com.social.mc_account.dto.AccountDataDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 
 @Service
+@RequiredArgsConstructor
 public class KafkaProducer {
-    private final KafkaTemplate<String, HashMap<String, Object>> kafkaTemplate;
 
-    public KafkaProducer(KafkaTemplate<String, HashMap<String, Object>> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
+    private final KafkaTemplate<String, AccountDataDTO> kafkaTemplate;
 
-    public void sendMessage(HashMap<String, Object> data){
+
+
+    public void sendMessage(AccountDataDTO data){
         kafkaTemplate.send("${app.kafka.kafkaMessageTopic}", data);
     }
 }
