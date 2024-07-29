@@ -1,5 +1,7 @@
-package com.social.mc_account.exception;
+package com.social.mc_account.controller;
 
+import com.social.mc_account.exception.AppError;
+import com.social.mc_account.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

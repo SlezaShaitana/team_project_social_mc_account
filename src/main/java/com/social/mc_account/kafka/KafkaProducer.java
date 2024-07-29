@@ -1,6 +1,5 @@
 package com.social.mc_account.kafka;
 
-import com.social.mc_account.model.KafkaAccount;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 

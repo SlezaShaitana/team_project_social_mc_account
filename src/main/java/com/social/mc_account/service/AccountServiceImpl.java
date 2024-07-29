@@ -1,33 +1,30 @@
 package com.social.mc_account.service;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.social.mc_account.dto.*;
 import com.social.mc_account.exception.ResourceNotFoundException;
 import com.social.mc_account.kafka.KafkaConsumer;
 import com.social.mc_account.kafka.KafkaProducer;
 import com.social.mc_account.mapper.AccountMapper;
 import com.social.mc_account.model.Account;
-import com.social.mc_account.model.KafkaAccount;
+import com.social.mc_account.model.KafkaAccountDtoRequest;
 import com.social.mc_account.repository.AccountRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 @EnableAsync
 @Slf4j
 public class AccountServiceImpl implements AccountService {
-    @Autowired
     private AccountRepository accountRepository;
 
     private KafkaProducer producer;
@@ -37,35 +34,31 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account getDataAccount(String authorization, String email) {
         Account account = accountRepository.findByEmail(email);
-        if(account != null){
-            log.info("The account: " + account + "was successfully found by email: " + email);
+        if (account != null) {
+            log.info("The account: {} was successfully found by email: {}", account, email);
             return account;
         } else {
+            log.warn("The account with email: {} not found", email);
             throw new ResourceNotFoundException("The account with email: " + email + " not found");
         }
     }
 
     @Override
     public AccountMeDTO updateAccount(AccountMeDTO accountMeDTO) {
-        Optional<Account> optionalAccount = accountRepository.findById(accountMeDTO.getId());
-        if (optionalAccount.isPresent()) {
+        Account account = accountRepository.findById(accountMeDTO.getId()).orElseThrow();
             HashMap<String, Object> updateAccount = new HashMap<>();
-            Account account = optionalAccount.get();
             mapper.updateAccountFromDTO(account, accountMeDTO);
             accountRepository.save(account);
             updateAccount.put("account", account);
             producer.sendMessage(updateAccount);
-            log.info("The account: " + account + "was successfully update");
+            log.info("The account: {} was successfully update", account);
             return accountMeDTO;
-        } else {
-            throw new ResourceNotFoundException("The account with id: " + accountMeDTO.getId() + " not found");
-        }
     }
 
     @Override
     @Transactional
     public AccountMeDTO createAccount(AccountMeDTO accountMeDTO) {
-        KafkaAccount kafkaAccount = new KafkaAccount();
+        KafkaAccountDtoRequest kafkaAccount = new KafkaAccountDtoRequest();
         HashMap<String, Object> kafkaMessage = new HashMap<>();
         kafkaMessage.put("Account", kafkaAccount);
         Account account = new Account();
@@ -87,9 +80,10 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> optionalAccount = accountRepository.findById(userId);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            log.info("Thea account data with id: " + account.getId() + " has been successfully received");
+            log.info("Thea account data with id: {} has been successfully received", account.getId());
             return mapper.convertToAccountMeDTO(account);
         }
+        log.warn("The account with id: {} not found", authorization);
         throw new ResourceNotFoundException("The account with id: " + authorization + " not found");
     }
 
@@ -102,9 +96,10 @@ public class AccountServiceImpl implements AccountService {
             account.setLastOnlineTime(new Date());
             account.setOnline(true);
             accountRepository.save(account);
-            log.info("The authorize account: " + account + " successfully updated");
+            log.info("The authorize account: {} successfully updated", account);
             return mapper.convertToAccountMeDTO(account);
         } else {
+            log.warn("The account with id: {} not updated", authorization);
             throw new ResourceNotFoundException("The account with id: " + authorization + " not updated");
         }
     }
@@ -118,11 +113,12 @@ public class AccountServiceImpl implements AccountService {
             Account account = optionalUser.get();
             account.setDeleted(true);
             accountRepository.save(account);
-            log.info("The account with id: " + account.getId() + " successfully softly deleted");
+            log.info("The account with id: {} successfully softly deleted", account.getId());
             TimeUnit.DAYS.sleep(10);
             accountRepository.delete(account);
-            log.info("The account with id: " + account.getId() + " completely deleted from the database");
+            log.info("The account with id: {} completely deleted from the database", account.getId());
         } else {
+            log.warn("The account with id: {} not found", authorization);
             throw new ResourceNotFoundException("The account with id: " + authorization + " not found");
         }
     }
@@ -137,6 +133,7 @@ public class AccountServiceImpl implements AccountService {
             log.info("Notification sent to friends");
             return "Notification sent to friends of " + account.getFirstName();
         } else {
+            log.warn("The account with id: {} not found", authorization);
             throw new ResourceNotFoundException("The account with id: " + authorization + " not found");
         }
     }
@@ -146,9 +143,10 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> optionalAccount = accountRepository.findById(id);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            log.info("The account with id: " + id  + " was successfully found");
+            log.info("The account with id: {} was successfully found", id);
             return mapper.convertToAccountDataDTO(account);
         }
+        log.warn("The account with id: {} not found", id);
         throw new ResourceNotFoundException("The account with id: " + id + " not found");
     }
 
@@ -158,9 +156,10 @@ public class AccountServiceImpl implements AccountService {
 
         if (user.isPresent()) {
             Account thisUser = user.get();
-            log.info("The account with id: " + id + "successfully deleted");
+            log.info("The account with id: {} successfully deleted", id);
             accountRepository.delete(thisUser);
         } else {
+            log.warn("The account with id: {} not found", id);
             throw new ResourceNotFoundException("The account with id: " + id + " not found");
         }
     }
@@ -200,6 +199,6 @@ public class AccountServiceImpl implements AccountService {
 
     private String getAuthorizationFromContext() {
 
-     return SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        return SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
     }
 }

@@ -1,7 +1,7 @@
 package com.social.mc_account.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.social.mc_account.model.KafkaAccount;
+import com.social.mc_account.model.KafkaAccountDtoRequest;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -33,7 +33,7 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public ProducerFactory<String, KafkaAccount> kafkaAccountProducerFactory(ObjectMapper objectMapper){
+    public ProducerFactory<String, KafkaAccountDtoRequest> kafkaAccountProducerFactory(ObjectMapper objectMapper){
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -44,12 +44,12 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public KafkaTemplate<String, KafkaAccount> kafkaTemplate(ProducerFactory<String, KafkaAccount> kafkaAccountProducerFactory){
+    public KafkaTemplate<String, KafkaAccountDtoRequest> kafkaTemplate(ProducerFactory<String, KafkaAccountDtoRequest> kafkaAccountProducerFactory){
         return new KafkaTemplate<>(kafkaAccountProducerFactory);
     }
 
     @Bean
-    public ConsumerFactory<String, KafkaAccount> kafkaAccountConsumerFactory(ObjectMapper objectMapper){
+    public ConsumerFactory<String, KafkaAccountDtoRequest> kafkaAccountConsumerFactory(ObjectMapper objectMapper){
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -62,10 +62,10 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, KafkaAccount> kafkaAccountConcurrentKafkaListenerContainerFactory(
-            ConsumerFactory<String, KafkaAccount> kafkaAccountConsumerFactory
+    public ConcurrentKafkaListenerContainerFactory<String, KafkaAccountDtoRequest> kafkaAccountConcurrentKafkaListenerContainerFactory(
+            ConsumerFactory<String, KafkaAccountDtoRequest> kafkaAccountConsumerFactory
     ){
-        ConcurrentKafkaListenerContainerFactory<String, KafkaAccount> factory= new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<String, KafkaAccountDtoRequest> factory= new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(kafkaAccountConsumerFactory);
 
         return factory;

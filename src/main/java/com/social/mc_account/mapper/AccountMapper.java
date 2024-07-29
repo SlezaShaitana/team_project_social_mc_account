@@ -21,7 +21,6 @@ public class AccountMapper {
     }
 
     public AccountPageDTO convertToAccountPageDTO(Account account) {
-        //Или здесь тоже надо через ObjectMapper???
         return AccountPageDTO.builder()
                 .accountMeDTO(convertToAccountMeDTO(account))
                 .totalElements(0)
@@ -38,29 +37,7 @@ public class AccountMapper {
     }
 
     public void updateAccountFromDTO(Account account, AccountMeDTO accountMeDTO) {
-        //И тут?
-        Account.builder()
-                .id(accountMeDTO.getId())
-                .firstName(accountMeDTO.getFirstName())
-                .lastName(accountMeDTO.getLastName())
-                .email(accountMeDTO.getEmail())
-                .password(accountMeDTO.getPassword())
-                .phone(accountMeDTO.getPhone())
-                .photo(accountMeDTO.getPhoto())
-                .profileCover(accountMeDTO.getProfileCover())
-                .about(accountMeDTO.getAbout())
-                .city(accountMeDTO.getCity())
-                .country(accountMeDTO.getCountry())
-                .statusCode(accountMeDTO.getStatusCode())
-                .regDate(new Date())
-                .birthDate(accountMeDTO.getBirthDate())
-                .messagePermission(account.getMessagePermission())
-                .lastOnlineTime(new Date())
-                .isOnline(false)
-                .isBlocked(false)
-                .emojiStatus(accountMeDTO.getEmojiStatus())
-                .updatedOn(LocalDateTime.now())
-                .deletionTimestamp(null)
-                .isDeleted(false).build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.convertValue(account, AccountMeDTO.class);
     }
 }

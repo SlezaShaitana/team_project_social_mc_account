@@ -17,13 +17,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/account")
 @RequiredArgsConstructor
-@Data
 public class ApiController {
 
     private final AccountServiceImpl accountService;
 
     @GetMapping
-    public Account getDataAccountByEmail(@RequestHeader String authorization, String email){
+    public Account getDataAccountByEmail(@RequestHeader String authorization, @RequestParam String email){
         return accountService.getDataAccount(authorization, email);
     }
 
@@ -42,47 +41,47 @@ public class ApiController {
         return  accountService.getDataMyAccount(authorization);
     }
 
-    @PutMapping("/account/me")
+    @PutMapping("/me")
     public AccountMeDTO updateDataMyAccount(@RequestHeader String authorization){
         return accountService.updateAuthorizeAccount(authorization);
     }
 
-    @DeleteMapping("/account/me")
+    @DeleteMapping("/me")
     public void deleteMyAccount(@RequestHeader String authorization) throws InterruptedException {
          accountService.deleteAccount(authorization);
     }
 
-    @PutMapping("/account/birthdays")
+    @PutMapping("/birthdays")
     public String putNotificationsForFriends(){
         return accountService.putNotification();
     }
 
-    @GetMapping("/account/{id}")
+    @GetMapping("/{id}")
     public AccountDataDTO getDataMyAccountById(@PathVariable UUID id){
         return accountService.getDataById(id);
     }
 
-    @DeleteMapping("/account/{id}")
+    @DeleteMapping("/{id}")
     public void deleteMyAccountById(@PathVariable UUID id){
         accountService.deleteAccountById(id);
     }
 
-    @GetMapping("/account/unsupported")
+    @GetMapping("/unsupported")
     public List<AccountPageDTO> getAllAccounts(){
         return accountService.getAllAccounts();
     }
 
-    @GetMapping("/account/statistic")
-    public List<StatisticDTO> getStatisticAccounts(StatisticRequestDTO requestDTO){
+    @GetMapping("/statistic")
+    public List<StatisticDTO> getStatisticAccounts(@RequestParam StatisticRequestDTO requestDTO){
         return accountService.getStatistic();
     }
 
-    @GetMapping("/account/search")
-    public List<Account> getListAccounts(Account account){
+    @GetMapping("/search")
+    public List<Account> getListAccounts(@RequestParam Account account){
         return accountService.getListAccounts(account);
     }
 
-    @GetMapping("/account/search/statusCode")
+    @GetMapping("/search/statusCode")
     public List<AccountPageDTO> getListAccountsByStatus(@PathVariable String statusCode){
         return accountService.getAccountsByStatusCode(statusCode);
     }

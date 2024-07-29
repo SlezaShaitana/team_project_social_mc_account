@@ -4,6 +4,7 @@ import com.social.mc_account.dto.StatusRole;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.kafka.common.protocol.types.Field;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,18 +16,10 @@ import java.util.UUID;
 @Entity
 @Data
 @Table(name = "users")
-@Builder
 public class Account {
 
-    public Account(String id, String emailAccount, String passwordAccount){
-        this.id = UUID.fromString(id);
-        this.email = emailAccount;
-        this.password = passwordAccount;
-    }
-    public Account(){}
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(unique = true)
     private UUID id;
 

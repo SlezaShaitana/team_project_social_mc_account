@@ -11,7 +11,7 @@ import java.util.UUID;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, UUID> {
     List<Account> findByStatusCode(String statusCode);
-    List<AccountPageDTO> findAllByStatusCode(String statusCode);
+    List<Account> findAllByStatusCode(String statusCode);
     Account findByEmail(String email);
     List<Account> findAccountsById(UUID uuid);
 }
