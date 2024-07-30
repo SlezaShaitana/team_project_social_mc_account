@@ -24,7 +24,7 @@ public class KafkaConfiguration {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value("${app.kafka.kafkaMessageGroupId}")
+    @Value("${spring.kafka.kafkaMessageGroupId}")
     private String kafkaMessageGroupId;
 
     @Bean
