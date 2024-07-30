@@ -13,6 +13,6 @@ public class KafkaProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
     public void sendMessage(AccountDataDTO data){
-        kafkaTemplate.send("${app.kafka.kafkaMessageTopic}", data);
+        kafkaTemplate.send("${spring.kafka.kafkaMessageTopic}", data);
     }
 }
