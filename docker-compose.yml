@@ -1,13 +1,32 @@
 version: '3'
 services:
-  mc-dialog:
+  eureka-server:
+    image: eurekaserver:latest
+    container_name: eureka-server
+    ports:
+      - "8888:8888"
+    networks:
+      - eureka-network
+
+  mc-account:
     container_name: mc-account
     image: mc-account-image
     build: .
     ports:
-    - "8089:8089"
+      - "8089:8089"
     environment:
-    - SERVER_PORT=8089
-    - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/database
-    - SPRING_DATASOURCE_USERNAME=postgres
-    - SPRING_DATASOURCE_PASSWORD=postgres
+      - SERVER_PORT=8089
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/database
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8888/eureka/
+      - EUREKA_CLIENT_REGISTERWITH_EUREKA=true
+      - EUREKA_CLIENT_FETCHREGISTRY=false
+    depends_on:
+      - eureka-server
+    networks:
+      - eureka-network
+
+networks:
+  eureka-network:
+    driver: bridge
