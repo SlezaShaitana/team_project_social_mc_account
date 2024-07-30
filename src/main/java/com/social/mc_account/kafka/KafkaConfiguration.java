@@ -1,4 +1,3 @@
-/*
 package com.social.mc_account.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,4 +71,3 @@ public class KafkaConfiguration {
         return factory;
     }
 }
-*/
