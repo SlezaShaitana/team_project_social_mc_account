@@ -15,7 +15,6 @@ public class AccountDataDTO {
     private boolean isDeleted;
     private String firstName;
     private String email;
-    private String password;
-    private StatusRole roles;
+    private String role;
     private List<AuthorityDTO> authorities;
 }

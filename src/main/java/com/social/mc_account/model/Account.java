@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "users")
+@Table(name = "account")
 public class Account {
 
     @Id
@@ -26,10 +26,10 @@ public class Account {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
 
-    @Column(nullable = false)
+    @Column(name = "first_name",nullable = false)
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     private String email;
@@ -62,7 +62,7 @@ public class Account {
     private Date regDate;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "birth_date")
+    @Column(name = "birthDate")
     private Date birthDate;
 
     @Column(name = "message_permission")

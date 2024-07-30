@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AccountService {
-    Account getDataAccount(String authorization, String email);
+    AccountDataDTO getDataAccount(String authorization, String email);
 
     AccountMeDTO updateAccount(AccountMeDTO accountMeDTO);
 
@@ -15,7 +15,7 @@ public interface AccountService {
 
     AccountMeDTO getDataMyAccount(String authorization);
 
-    AccountMeDTO updateAuthorizeAccount(String authorization);
+    Account updateAuthorizeAccount(String authorization);
 
     void deleteAccount(String authorization) throws InterruptedException;
 

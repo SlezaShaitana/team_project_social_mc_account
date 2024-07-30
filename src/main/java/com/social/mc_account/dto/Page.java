@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class Page {
-    @Min(value = 0, message = "The page value must be greater than or equal to 0." )
+    @Min(value = 0, message = "The page value must be greater than or equal to 0.")
     private int page;
 
     @Min(value = 1, message = "the page value must be greater than or equal to 1.")

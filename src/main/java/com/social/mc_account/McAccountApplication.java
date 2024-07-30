@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EntityScan(basePackages = {"com.social.mc_account.dto", "com.social.mc_account.model"})
+@EntityScan(basePackages = {"com.social.mc_account.dto", "com.social.mc_account.model", "com.social.mc_account.mapper"})
 @EnableJpaRepositories(basePackages = "com.social.mc_account.repository")
 public class McAccountApplication {
 
