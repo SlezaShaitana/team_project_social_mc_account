@@ -7,9 +7,9 @@ spring:
     hibernate:
       ddl-auto: none
   datasource:
-    url: jdbc:postgresql://localhost:5432/account_db
+    url: jdbc:postgresql://localhost:5432/database
     username: postgres
-    password: 1234
+    password: postgres
     show-sql: true
     dialect: org.hibernate.dialect.PostgreSQL8Dialect
   liquibase:
@@ -20,5 +20,5 @@ spring:
     app:
       kafkaMessageTopic: "updateTopic"
       kafkaMessageGroupId: "account_consumer"
-  server:
-    port: 8089
+server:
+  port: 8089
