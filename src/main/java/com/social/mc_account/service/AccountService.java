@@ -2,6 +2,7 @@ package com.social.mc_account.service;
 
 import com.social.mc_account.dto.*;
 import com.social.mc_account.model.Account;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +14,7 @@ public interface AccountService {
 
     AccountMeDTO createAccount(AccountMeDTO accountMeDTO);
 
-    AccountMeDTO getDataMyAccount(String authorization);
+    AccountMeDTO getDataMyAccount(UserDetails userDetails);
 
     Account updateAuthorizeAccount(String authorization);
 

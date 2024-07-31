@@ -9,6 +9,7 @@ import org.apache.coyote.Response;
 import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,8 +38,9 @@ public class ApiController {
     }
 
     @GetMapping("/me")
-    public AccountMeDTO getDataMyAccount(@RequestHeader String authorization) {
-        return accountService.getDataMyAccount(authorization);
+    public AccountMeDTO getDataMyAccount(@RequestHeader UserDetails userDetails) {
+        Account account = accountService.findUserByUsername(userDetails.getUsername());
+        return new AccountMeDTO(account);
     }
 
     @PutMapping("/me")

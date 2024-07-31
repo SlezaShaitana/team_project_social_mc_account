@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -73,7 +75,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountMeDTO getDataMyAccount(String authorization) {
+    public AccountMeDTO getDataMyAccount(@AuthenticationPrincipal UserDetails userDetails) {
         UUID userId = UUID.randomUUID(); //НЕРАБОЧИЙ МЕТОД
         Optional<Account> optionalAccount = accountRepository.findById(userId);
         if (optionalAccount.isPresent()) {
