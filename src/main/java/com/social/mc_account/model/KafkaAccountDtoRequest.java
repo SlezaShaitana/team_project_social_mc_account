@@ -9,20 +9,10 @@ import java.util.Collection;
 import java.util.UUID;
 
 @Data
-public class KafkaAccountDtoRequest implements UserDetails {
+public class KafkaAccountDtoRequest {
     private UUID id;
     private String email;
     private String password;
     private StatusRole role;
     private Collection<? extends GrantedAuthority> authorities;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
 }

@@ -15,6 +15,7 @@ public interface AccountService {
     AccountMeDTO createAccount(AccountMeDTO accountMeDTO);
 
     AccountMeDTO getDataMyAccount(UserDetails userDetails);
+    Account findUserByUsername(String username);
 
     Account updateAuthorizeAccount(String authorization);
 
@@ -31,6 +32,4 @@ public interface AccountService {
     List<StatisticDTO> getStatistic();
 
     List<Account> getListAccounts(Account account);
-
-    List<AccountPageDTO> getAccountsByStatusCode(String statusCode);
 }

@@ -37,11 +37,10 @@ public class ApiController {
         return accountService.createAccount(accountMeDTO);
     }
 
-    @GetMapping("/me")
+/*    @GetMapping("/me")
     public AccountMeDTO getDataMyAccount(@RequestHeader UserDetails userDetails) {
-        Account account = accountService.findUserByUsername(userDetails.getUsername());
-        return new AccountMeDTO(account);
-    }
+         accountService.findUserByUsername(userDetails.getUsername());
+    }*/
 
     @PutMapping("/me")
     public Account updateDataMyAccount(@RequestHeader String authorization) {

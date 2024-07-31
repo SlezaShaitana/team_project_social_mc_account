@@ -83,8 +83,8 @@ public class AccountServiceImpl implements AccountService {
             log.info("Thea account data with id: {} has been successfully received", account.getId());
             return mapper.toAccountMeDtoAccount(account);
         }
-        log.warn("The account with id: {} not found", authorization);
-        throw new ResourceNotFoundException("The account with id: " + authorization + " not found");
+        log.warn("The account with username: {} not found", userDetails.getUsername());
+        throw new ResourceNotFoundException("The account with username: " + userDetails.getUsername() + " not found");
     }
 
     @Override
@@ -188,5 +188,11 @@ public class AccountServiceImpl implements AccountService {
         List<Account> accounts = accountRepository.findByStatusCode(statusCode);
         log.info("All account received by status code: " + statusCode);
         return mapper.toPageDtoAccounts(accounts);
+    }
+
+    @Override
+    public Account findUserByUsername(String username) {
+        return accountRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
     }
 }
