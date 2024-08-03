@@ -13,7 +13,7 @@ public interface AccountService {
 
     AccountMeDTO updateAccount(AccountMeDTO accountMeDTO);
 
-    AccountMeDTO createAccount(AccountMeDTO accountMeDTO);
+    AccountMeDTO createAccount(KafkaAccountDtoRequest kafkaAccountDtoRequest);
 
     AccountMeDTO getDataMyAccount(String authorization);
     AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO);
@@ -30,7 +30,7 @@ public interface AccountService {
 
     StatisticDTO getStatistic(StatisticRequestDTO statisticRequestDTO);
 
-    List<Account> getListAccounts(SearchDTO searchDTO, Pageable pageable);
+    AccountPageDTO getListAccounts(SearchDTO searchDTO, Page pageDto);
 
-    List<AccountPageDTO> getAccountsByStatusCode(String statusCode);
+    AccountPageDTO getAccountsByStatusCode(SearchDTO searchDTO, Page page);
 }

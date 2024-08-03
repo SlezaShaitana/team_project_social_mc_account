@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,17 +34,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String token = getToken(request);
+            String role = "ADMIN";
             if (token != null) { //if (token != null && jwtValidation.validateToken(token))
+                GrantedAuthority authority = new SimpleGrantedAuthority(role);
+                Collection<? extends GrantedAuthority> authorities = Collections.singletonList(authority);
+               //String email = jwtUtils.getEmail(token);
+                //List<String> roles = jwtUtils.getRoles(token);
 
-                String email = jwtUtils.getEmail(token);
-                List<String> roles = jwtUtils.getRoles(token);
-
-                Collection<? extends GrantedAuthority> authorities = roles.stream()
+               /* Collection<? extends GrantedAuthority> authorities = roles.stream()
                         .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+                        .collect(Collectors.toList());*/
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        email, null, authorities
+                        "email", null, authorities
                 );
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

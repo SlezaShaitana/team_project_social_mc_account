@@ -17,7 +17,7 @@ public class SearchDTO {
     private String city;
     private String country;
     private boolean isBlocked;
-    private StatusCode statusCode;
+    private String statusCode;
     private int ageTo;
     private int ageFrom;
 }

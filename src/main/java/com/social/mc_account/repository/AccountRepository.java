@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface AccountRepository extends JpaRepository<Account, UUID>, JpaSpecificationExecutor<SearchDTO> {
+public interface AccountRepository extends JpaRepository<Account, UUID>, JpaSpecificationExecutor<Account> {
     List<Account> findByStatusCode(String statusCode);
     List<Account> findAllByStatusCode(String statusCode);
     Account findByEmail(String email);

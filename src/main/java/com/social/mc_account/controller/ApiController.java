@@ -34,8 +34,8 @@ public class ApiController {
     }
 
     @PostMapping
-    public AccountMeDTO createAccount(@RequestBody AccountMeDTO accountMeDTO) {
-        return accountService.createAccount(accountMeDTO);
+    public AccountMeDTO createAccount(@RequestBody KafkaAccountDtoRequest kafkaAccountDtoRequest) {
+        return accountService.createAccount(kafkaAccountDtoRequest);
     }
 
     @GetMapping("/me")
@@ -74,17 +74,17 @@ public class ApiController {
     }
 
     @GetMapping("/statistic")
-    public StatisticDTO getStatisticAccounts(@RequestParam StatisticRequestDTO requestDTO) {
+    public StatisticDTO getStatisticAccounts(@ModelAttribute StatisticRequestDTO requestDTO) {
         return accountService.getStatistic(requestDTO);
     }
 
     @GetMapping("/search")
-    public List<Account> getListAccounts(@RequestParam SearchDTO searchDTO, @RequestParam Pageable pageable) {
+    public AccountPageDTO getListAccounts(@ModelAttribute SearchDTO searchDTO, @ModelAttribute Page pageable) {
         return accountService.getListAccounts(searchDTO, pageable);
     }
 
     @GetMapping("/search/statusCode")
-    public List<AccountPageDTO> getListAccountsByStatus(@RequestParam SearchDTO searchDTO, @RequestParam Pageable pageable) {
-        return null;
+    public AccountPageDTO getListAccountsByStatus(@ModelAttribute SearchDTO searchDTO, @ModelAttribute Page pageable) {
+        return accountService.getAccountsByStatusCode(searchDTO, pageable);
     }
 }
