@@ -1,14 +1,12 @@
 package com.social.mc_account.model;
 
-import com.social.mc_account.dto.StatusRole;
+import com.social.mc_account.dto.Role;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.kafka.common.protocol.types.Field;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
@@ -38,9 +36,9 @@ public class Account {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private StatusRole role;
+    private Role role;
 
-    @Column(nullable = false)
+    @Column()
     private String phone;
 
     private String photo;
@@ -57,20 +55,17 @@ public class Account {
     @Column(name = "status_code")
     private String statusCode;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "reg_date")
-    private Date regDate;
+    private LocalDate regDate;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "birthDate")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @Column(name = "message_permission")
     private String messagePermission;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_online_time")
-    private Date lastOnlineTime;
+    private LocalDate lastOnlineTime;
 
     @Column(name = "is_online")
     private boolean isOnline;
@@ -83,14 +78,12 @@ public class Account {
 
     @CreationTimestamp
     @Column(name = "created_on", updatable = false)
-    private LocalDateTime createdOn;
+    private LocalDate createdOn;
 
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "update_on")
-    private LocalDateTime updatedOn;
+    private LocalDate updatedOn;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "deletion_timestamp")
-    private LocalDateTime deletionTimestamp;
+    private LocalDate deletionTimestamp;
 }

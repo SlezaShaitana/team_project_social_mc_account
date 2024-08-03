@@ -5,9 +5,9 @@ spring:
     generate-ddl: false
     open-in-view: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
   datasource:
-    url: jdbc:postgresql://localhost:5432/database
+    url: jdbc:postgresql://localhost:5432/account_db
     username: postgres
     password: postgres
     show-sql: true
@@ -23,9 +23,15 @@ spring:
 server:
   port: 8089
 
+app:
+  jwt:
+    secret: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8888/eureka/
       register-with-eureka: true
       fetch-registry: true
+  instance:
+      hostname: localhost

@@ -1,11 +1,10 @@
 package com.social.mc_account.dto;
 
-public enum StatusRole {
+public enum Role {
     ADMIN,
     MODERATOR,
     USER,
     EDITOR,
     REPORTER,
     VIEWER;
-
 }

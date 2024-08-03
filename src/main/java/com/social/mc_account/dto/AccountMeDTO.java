@@ -1,10 +1,7 @@
 package com.social.mc_account.dto;
 
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -19,7 +16,7 @@ public class AccountMeDTO {
     private String lastName;
     private String email;
     private String password;
-    private StatusRole role;
+    private Role role;
     private String phone;
     private String photo;
     private String profileCover;

@@ -1,7 +1,6 @@
 package com.social.mc_account.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.social.mc_account.model.KafkaAccountDtoRequest;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
