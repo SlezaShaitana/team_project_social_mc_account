@@ -1,12 +1,7 @@
 package com.social.mc_account.dto;
 
-import com.social.mc_account.dto.AuthorityDTO;
-import com.social.mc_account.dto.RoleDTO;
-import lombok.Builder;
-import lombok.Data;
-
-import java.util.List;
-import java.util.UUID;
+import lombok.*;
+import java.util.*;
 
 @Data
 @Builder

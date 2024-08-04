@@ -17,7 +17,8 @@ spring:
     change-log: classpath:/db/changelog/changelog-master.xml
   kafka:
     bootstrap-servers: localhost:9092
-    kafkaMessageTopic: updateTopic
+    kafkaMessageTopicForAccount: updateTopic
+    kafkaMessageTopicForNotification: NotificationTopic
     kafkaMessageGroupId: account_consumer
 
 server:

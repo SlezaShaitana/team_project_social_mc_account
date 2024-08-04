@@ -2,7 +2,12 @@ package com.social.mc_account.specification;
 
 import com.social.mc_account.dto.SearchDTO;
 import com.social.mc_account.model.Account;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.time.LocalDate;
 
 public interface AccountSpecification {
     static Specification<Account> findWithFilter(SearchDTO filter){
@@ -11,8 +16,8 @@ public interface AccountSpecification {
                 .and(byCity(filter.getCity()))
                 .and(byCountry(filter.getCountry()))
                 .and(byIsBlocked(filter.isBlocked()))
-                .and(byStatusCode(filter.getStatusCode())));
-                //.and(byAgeToFrom(filter.getAgeTo(), filter.getAgeFrom())));
+                .and(byStatusCode(filter.getStatusCode())))
+                .and(byAgeToFrom(filter.getAgeTo(), filter.getAgeFrom()));
     }
 
     static Specification<Account> byFirstname(String firstname){
@@ -69,19 +74,27 @@ public interface AccountSpecification {
         };
     }
 
-    static Specification<Account> byAgeToFrom(Integer ageTo, Integer ageFrom){
-        return (root, query, criteriaBuilder) -> {
-            if(ageTo == null && ageFrom == null){
+
+    public static Specification<Account> byAgeToFrom(Integer ageTo, Integer ageFrom) {
+        return (Root<Account> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
+            LocalDate now = LocalDate.now();
+
+            if (ageTo == null && ageFrom == null) {
                 return criteriaBuilder.conjunction();
-            } else if(ageTo == null){
-                return criteriaBuilder.greaterThanOrEqualTo(root.get("ageFrom"), ageFrom);
-            } else if(ageFrom == null){
-                return criteriaBuilder.greaterThanOrEqualTo(root.get("ageTo"), ageTo);
+            } else if (ageTo == null) {
+                LocalDate birthDateFrom = now.minusYears(ageFrom);
+                return criteriaBuilder.lessThanOrEqualTo(root.get("birthDate"), birthDateFrom);
+            } else if (ageFrom == null) {
+                LocalDate birthDateTo = now.minusYears(ageTo);
+                return criteriaBuilder.greaterThanOrEqualTo(root.get("birthDate"), birthDateTo);
             }
+
+            LocalDate birthDateTo = now.minusYears(ageTo);
+            LocalDate birthDateFrom = now.minusYears(ageFrom);
             return criteriaBuilder.and(
-                    criteriaBuilder.greaterThanOrEqualTo(root.get("ageTo"), ageTo),
-                    criteriaBuilder.greaterThanOrEqualTo(root.get("ageFrom"), ageFrom)
-        );
+                    criteriaBuilder.lessThanOrEqualTo(root.get("birthDate"), birthDateFrom),
+                    criteriaBuilder.greaterThanOrEqualTo(root.get("birthDate"), birthDateTo)
+            );
         };
     }
 }

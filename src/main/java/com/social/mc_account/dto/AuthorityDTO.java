@@ -1,7 +1,6 @@
 package com.social.mc_account.dto;
 
 import lombok.Data;
-
 import java.util.UUID;
 
 @Data

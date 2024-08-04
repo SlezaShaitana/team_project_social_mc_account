@@ -7,9 +7,10 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
-    Account toAccountMeDto(AccountMeDTO accountMeDTO);
-    AccountMeDTO toAccountMeDtoAccount(Account account);
-    List<AccountMeDTO> toAccountsMeDto(List<Account> accounts);
-    AccountDataDTO toAccountDataDto(Account account);
-    List<AccountPageDTO> toPageDtoAccounts(List<Account> accountsDto);
+    Account toAccountFromAccountMeDto(AccountMeDTO accountMeDTO);
+    AccountMeDTO toAccountMeDtoForAccount(Account account);
+    List<AccountMeDTO> toAccountsMeDtoForAccounts(List<Account> accounts);
+    AccountDataDTO toAccountDataDtoFromAccount(Account account);
+    List<AccountPageDTO> toPageDtoAccountsFromAccounts(List<Account> accounts);
+
 }

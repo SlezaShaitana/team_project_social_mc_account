@@ -1,21 +1,10 @@
 package com.social.mc_account.controller;
 
 import com.social.mc_account.dto.*;
-import com.social.mc_account.model.Account;
-import com.social.mc_account.security.JwtUtils;
 import com.social.mc_account.service.AccountServiceImpl;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
-import org.apache.kafka.common.protocol.types.Field;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
+import java.util.*;;
 
 @RestController
 @RequestMapping("/api/v1/account")
@@ -34,8 +23,8 @@ public class ApiController {
     }
 
     @PostMapping
-    public AccountMeDTO createAccount(@RequestBody KafkaAccountDtoRequest kafkaAccountDtoRequest) {
-        return accountService.createAccount(kafkaAccountDtoRequest);
+    public AccountMeDTO createAccount(@RequestBody AccountDtoRequest accountDtoRequest) {
+        return accountService.createAccount(accountDtoRequest);
     }
 
     @GetMapping("/me")
@@ -54,8 +43,8 @@ public class ApiController {
     }
 
     @PutMapping("/birthdays")
-    public String putNotificationsForFriends() {
-        return accountService.putNotification();
+    public void putNotificationsForFriends() {
+        accountService.putNotification();
     }
 
     @GetMapping("/{id}")

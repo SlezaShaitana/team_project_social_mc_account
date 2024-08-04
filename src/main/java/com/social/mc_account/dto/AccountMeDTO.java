@@ -1,11 +1,8 @@
 package com.social.mc_account.dto;
 
-import lombok.Builder;
-import lombok.Data;
-
+import lombok.*;
+import java.util.*;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.UUID;
 
 @Data
 @Builder

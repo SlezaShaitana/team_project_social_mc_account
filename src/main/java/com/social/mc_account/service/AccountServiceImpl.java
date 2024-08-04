@@ -2,7 +2,6 @@ package com.social.mc_account.service;
 
 import com.social.mc_account.dto.*;
 import com.social.mc_account.exception.ResourceNotFoundException;
-import com.social.mc_account.kafka.KafkaConsumer;
 import com.social.mc_account.kafka.KafkaProducer;
 import com.social.mc_account.mapper.AccountMapper;
 import com.social.mc_account.model.Account;
@@ -12,25 +11,24 @@ import com.social.mc_account.specification.AccountSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.*;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @EnableAsync
 @Slf4j
+@ConditionalOnProperty(name = "scheduler.enabled", matchIfMissing = true)
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountMapper mapper;
@@ -40,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountDataDTO getDataAccount(String authorization, String email) {
         Account account = accountRepository.findByEmail(email);
-        AccountDataDTO accountDataDTO = mapper.toAccountDataDto(account);
+        AccountDataDTO accountDataDTO = mapper.toAccountDataDtoFromAccount(account);
         if (account != null) {
             log.info("The account: {} was successfully found by email: {}", account, email);
             return accountDataDTO;
@@ -54,16 +52,17 @@ public class AccountServiceImpl implements AccountService {
     public AccountMeDTO updateAccount(AccountMeDTO accountMeDTO) {
         Account account = accountRepository.findById(accountMeDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Account with ID " + accountMeDTO.getId() + " not found"));
-        account = mapper.toAccountMeDto(accountMeDTO);
-        account.setLastOnlineTime(LocalDate.now());
+        account = mapper.toAccountFromAccountMeDto(accountMeDTO);
+        account.setUpdatedOn(LocalDate.now());
         accountRepository.save(account);
 
-        KafkaAccountDtoRequest kafkaAccountDtoRequest = new KafkaAccountDtoRequest();
-        kafkaAccountDtoRequest.setId(account.getId());
-        kafkaAccountDtoRequest.setEmail(account.getEmail());
-        kafkaAccountDtoRequest.setRole(account.getRole());
+        AccountDtoRequest accountDtoRequest = AccountDtoRequest.builder()
+                .id(account.getId())
+                .email(account.getEmail())
+                .role(account.getRole())
+                .build();
 
-        producer.sendMessage(kafkaAccountDtoRequest);
+        producer.sendMessageForAuth(accountDtoRequest);
 
         log.info("The account: {} was successfully updated and message sent to Kafka", account);
         return accountMeDTO;
@@ -71,14 +70,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public AccountMeDTO createAccount(KafkaAccountDtoRequest kafkaAccountDtoRequest) {
-        Account account = new Account();
-        account.setId(kafkaAccountDtoRequest.getId());
-        account.setEmail(kafkaAccountDtoRequest.getEmail());
-        account.setRole(kafkaAccountDtoRequest.getRole());
+    public AccountMeDTO createAccount(AccountDtoRequest accountDtoRequest) {
+        Account account = Account.builder()
+                .id(accountDtoRequest.getId())
+                .email(accountDtoRequest.getEmail())
+                .role(accountDtoRequest.getRole())
+                .build();
+
         accountRepository.save(account);
 
-        AccountMeDTO accountMeDTO = mapper.toAccountMeDtoAccount(account);
+        AccountMeDTO accountMeDTO = mapper.toAccountMeDtoForAccount(account);
         log.info("Account successfully created from Kafka message!");
         return accountMeDTO;
     }
@@ -88,24 +89,34 @@ public class AccountServiceImpl implements AccountService {
     public AccountMeDTO getDataMyAccount(String authorization) {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalAccount = accountRepository.findById(id);
+
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             log.info("Thea account data with id: {} has been successfully received", account.getId());
-            return mapper.toAccountMeDtoAccount(account);
+            return mapper.toAccountMeDtoForAccount(account);
         }
-        log.warn("The account with id: {} not found", id);
-        throw new ResourceNotFoundException("The account with id: " + id + " not found");
+             log.warn("The account with id: {} not found", id);
+            throw new ResourceNotFoundException("The account with id: " + id + " not found");
     }
 
     @Override
     public AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO) {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalAccount = accountRepository.findById(id);
+
         if (optionalAccount.isPresent()) {
-            Account account = optionalAccount.get();
+            Account account = mapper.toAccountFromAccountMeDto(accountMeDTO);
             accountRepository.save(account);
+
+            AccountDtoRequest accountDtoRequest = AccountDtoRequest.builder()
+                    .id(account.getId())
+                    .email(account.getEmail())
+                    .role(account.getRole())
+                    .build();
+            producer.sendMessageForAuth(accountDtoRequest);
+
             log.info("The authorize account: {} successfully updated", account);
-            return mapper.toAccountMeDtoAccount(account);
+            return mapper.toAccountMeDtoForAccount(account);
         } else {
             log.warn("The account with id: {} not updated", id);
             throw new ResourceNotFoundException("The account with id: " + id + " not updated");
@@ -117,31 +128,40 @@ public class AccountServiceImpl implements AccountService {
     public void deleteAccount(String authorization) throws InterruptedException {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalUser = accountRepository.findById(id);
+
         if (optionalUser.isPresent()) {
             Account account = optionalUser.get();
             account.setDeleted(true);
             accountRepository.save(account);
             log.info("The account with id: {} successfully softly deleted", account.getId());
-            TimeUnit.DAYS.sleep(10); //ЗАМЕНИТЬ НА ЧТО-ТО ИНОЕ
-            accountRepository.delete(account);
-            log.info("The account with id: {} completely deleted from the database", account.getId());
+
+            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+            scheduler.schedule(() -> {
+                accountRepository.delete(account);
+                log.info("The account with id: {} completely deleted from the database", account.getId());
+            }, 10, TimeUnit.DAYS);
         } else {
-            log.warn("The account with id: {} not found", authorization);
-            throw new ResourceNotFoundException("The account with id: " + authorization + " not found");
+            log.warn("The account with id: {} not found", id);
+            throw new ResourceNotFoundException("The account with id: " + id + " not found");
         }
     }
 
     @Override
-    public String putNotification() {
-        UUID userId = UUID.randomUUID(); //НЕРАБОЧИЙ МЕТОД
-        Optional<Account> optionalAccount = accountRepository.findById(userId);
-        if (optionalAccount.isPresent()) {
-            Account account = optionalAccount.get();
-            log.info("Notification sent to friends");
-            return "Notification sent to friends of " + account.getFirstName();
-        } else {
-            log.warn("The account with id: not found");
-            throw new ResourceNotFoundException("The account with id: " + " not found");
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void putNotification() {
+        List<BirthdayDTO> birthdayDTOs = accountRepository.findAll().stream()
+                .filter(account -> LocalDate.now().equals(account.getBirthDate()))
+                .map(account -> {
+                    BirthdayDTO birthdayAccount = BirthdayDTO.builder()
+                            .firstName(account.getFirstName())
+                            .lastName(account.getLastName())
+                            .build();
+                    return birthdayAccount;
+                })
+                .collect(Collectors.toList());
+
+        for (BirthdayDTO birthdayDTO : birthdayDTOs) {
+            producer.sendMessageForNotification(birthdayDTO);
         }
     }
 
@@ -149,10 +169,11 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountDataDTO getDataById(UUID id) {
         Optional<Account> optionalAccount = accountRepository.findById(id);
+
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             log.info("The account with id: {} was successfully found", id);
-            return mapper.toAccountDataDto(account);
+            return mapper.toAccountDataDtoFromAccount(account);
         }
         log.warn("The account with id: {} not found", id);
         throw new ResourceNotFoundException("The account with id: " + id + " not found");
@@ -160,11 +181,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void deleteAccountById(UUID id) {
-        Optional<Account> user = accountRepository.findById(id);
-        if (user.isPresent()) {
-            Account thisUser = user.get();
+        Optional<Account> optionalAccount = accountRepository.findById(id);
+
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
             log.info("The account with id: {} successfully deleted", id);
-            accountRepository.delete(thisUser);
+            accountRepository.delete(account);
         } else {
             log.warn("The account with id: {} not found", id);
             throw new ResourceNotFoundException("The account with id: " + id + " not found");
@@ -175,7 +197,7 @@ public class AccountServiceImpl implements AccountService {
     public List<AccountPageDTO> getAllAccounts(SearchDTO searchDTO, Page page) {
         List<Account> accounts = accountRepository.findAll();
         log.info("All accounts received ");
-        return mapper.toPageDtoAccounts(accounts);
+        return mapper.toPageDtoAccountsFromAccounts(accounts);
     }
 
     @Override
@@ -183,17 +205,17 @@ public class AccountServiceImpl implements AccountService {
         StatisticDTO statistics = new StatisticDTO();
         CountPerAgeDTO countPerAgeDTO = new CountPerAgeDTO();
         CountPerMonthDTO countPerMonthDTO = new CountPerMonthDTO();
+
         List<Account> allAccount = accountRepository.findAll();
         LocalDate firstMonth = statisticRequestDTO.getFirstMonth();
         LocalDate lastMonth = statisticRequestDTO.getLastMonth();
-
         LocalDate birthDate = statisticRequestDTO.getDate();
         LocalDate currentDate = LocalDate.now();
-        int age = Period.between(birthDate, currentDate).getYears();
-        countPerAgeDTO.setAge(age);
 
-        int countPerAge = countPerAgeDTO.getCount();
-        int countPerMonth = countPerMonthDTO.getCount();
+        int age = Period.between(birthDate, currentDate).getYears();
+        int countPerAge = 0;
+        int countPerMonth = 0;
+
         for (Account account : allAccount) {
             if (account.getBirthDate().equals(statisticRequestDTO.getDate())) {
                 countPerAge++;
@@ -263,7 +285,7 @@ public class AccountServiceImpl implements AccountService {
                 .first(isFirst)
                 .last(isLast)
                 .size(size)
-                .accountMeDTO(mapper.toAccountsMeDto(accounts))
+                .accountMeDTO(mapper.toAccountsMeDtoForAccounts(accounts))
                 .number(number)
                 .empty(empty)
                 .build();
@@ -315,7 +337,7 @@ public class AccountServiceImpl implements AccountService {
                 .first(isFirst)
                 .last(isLast)
                 .size(size)
-                .accountMeDTO(mapper.toAccountsMeDto(accounts))
+                .accountMeDTO(mapper.toAccountsMeDtoForAccounts(accounts))
                 .number(number)
                 .empty(empty)
                 .build();

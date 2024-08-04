@@ -1,9 +1,7 @@
 package com.social.mc_account.dto;
 
 import lombok.Data;
-
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Data
 public class SearchDTO {

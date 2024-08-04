@@ -2,27 +2,25 @@ package com.social.mc_account.model;
 
 import com.social.mc_account.dto.Role;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @Data
+@Builder
 @Table(name = "account")
 public class Account {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private UUID id;
-
-    @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
 
     @Column(name = "first_name",nullable = false)
     private String firstName;
@@ -30,15 +28,16 @@ public class Account {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    @Column()
     private String phone;
 
     private String photo;
@@ -55,10 +54,10 @@ public class Account {
     @Column(name = "status_code")
     private String statusCode;
 
-    @Column(name = "reg_date")
+    @CreatedDate
+    @Column(name = "reg_date", updatable = false)
     private LocalDate regDate;
 
-    @Column(name = "birthDate")
     private LocalDate birthDate;
 
     @Column(name = "message_permission")
@@ -76,9 +75,9 @@ public class Account {
     @Column(name = "emoji_status")
     private String emojiStatus;
 
-    @CreationTimestamp
-    @Column(name = "created_on", updatable = false)
-    private LocalDate createdOn;
+    //@CreationTimestamp НУЖНО ЛИ ЭТО ПОЛЕ???
+    //@Column(name = "created_on", updatable = false)
+    //private LocalDate createdOn;
 
     @UpdateTimestamp
     @Column(name = "update_on")
@@ -86,4 +85,7 @@ public class Account {
 
     @Column(name = "deletion_timestamp")
     private LocalDate deletionTimestamp;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted;
 }

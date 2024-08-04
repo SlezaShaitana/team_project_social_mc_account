@@ -2,7 +2,6 @@ package com.social.mc_account.dto;
 
 import jakarta.validation.constraints.Min;
 import lombok.Data;
-
 import java.util.List;
 
 @Data
