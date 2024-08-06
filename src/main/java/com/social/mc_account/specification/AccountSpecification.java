@@ -10,64 +10,64 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 
 public interface AccountSpecification {
-    static Specification<Account> findWithFilter(SearchDTO filter){
+    static Specification<Account> findWithFilter(SearchDTO filter) {
         return Specification.where(byFirstname(filter.getFirstName())
-                .and(byLastname(filter.getLastName()))
-                .and(byCity(filter.getCity()))
-                .and(byCountry(filter.getCountry()))
-                .and(byIsBlocked(filter.isBlocked()))
-                .and(byStatusCode(filter.getStatusCode())))
+                        .and(byLastname(filter.getLastName()))
+                        .and(byCity(filter.getCity()))
+                        .and(byCountry(filter.getCountry()))
+                        .and(byIsBlocked(filter.isBlocked()))
+                        .and(byStatusCode(filter.getStatusCode())))
                 .and(byAgeToFrom(filter.getAgeTo(), filter.getAgeFrom()));
     }
 
-    static Specification<Account> byFirstname(String firstname){
+    static Specification<Account> byFirstname(String firstname) {
         return (root, query, criteriaBuilder) -> {
-            if(firstname == null){
+            if (firstname == null) {
                 return criteriaBuilder.conjunction();
             }
             return criteriaBuilder.equal(root.get("firstName"), firstname);
         };
     }
 
-    static Specification<Account> byLastname(String lastname){
+    static Specification<Account> byLastname(String lastname) {
         return (root, query, criteriaBuilder) -> {
-            if(lastname == null){
+            if (lastname == null) {
                 return criteriaBuilder.conjunction();
             }
             return criteriaBuilder.equal(root.get("lastName"), lastname);
         };
     }
 
-    static Specification<Account> byCity(String city){
+    static Specification<Account> byCity(String city) {
         return (root, query, criteriaBuilder) -> {
-            if(city == null){
+            if (city == null) {
                 return criteriaBuilder.conjunction();
             }
             return criteriaBuilder.equal(root.get("city"), city);
         };
     }
 
-    static Specification<Account> byCountry(String country){
+    static Specification<Account> byCountry(String country) {
         return (root, query, criteriaBuilder) -> {
-            if(country == null){
+            if (country == null) {
                 return criteriaBuilder.conjunction();
             }
             return criteriaBuilder.equal(root.get("country"), country);
         };
     }
 
-    static Specification<Account> byIsBlocked(Boolean isBlocked){
+    static Specification<Account> byIsBlocked(Boolean isBlocked) {
         return (root, query, criteriaBuilder) -> {
-            if(isBlocked == null){
+            if (isBlocked == null) {
                 return criteriaBuilder.conjunction();
             }
             return criteriaBuilder.equal(root.get("isBlocked"), isBlocked);
         };
     }
 
-    static Specification<Account> byStatusCode(String statusCode){
+    static Specification<Account> byStatusCode(String statusCode) {
         return (root, query, criteriaBuilder) -> {
-            if(statusCode == null){
+            if (statusCode == null) {
                 return criteriaBuilder.conjunction();
             }
             return criteriaBuilder.equal(root.get("statusCode"), statusCode);
@@ -75,7 +75,7 @@ public interface AccountSpecification {
     }
 
 
-    public static Specification<Account> byAgeToFrom(Integer ageTo, Integer ageFrom) {
+     static Specification<Account> byAgeToFrom(Integer ageTo, Integer ageFrom) {
         return (Root<Account> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
             LocalDate now = LocalDate.now();
 

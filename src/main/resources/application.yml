@@ -7,7 +7,7 @@ spring:
     hibernate:
       ddl-auto: none
   datasource:
-    url: jdbc:postgresql://localhost:5432/account_db
+    url: jdbc:postgresql://localhost:5435/database
     username: postgres
     password: postgres
     show-sql: true
@@ -22,7 +22,7 @@ spring:
     kafkaMessageGroupId: account_consumer
 
 server:
-  port: 8089
+  port: 8085
 
 app:
   jwt:

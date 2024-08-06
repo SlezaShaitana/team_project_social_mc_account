@@ -13,9 +13,9 @@ services:
     image: mc-account-image
     build: .
     ports:
-      - "8089:8089"
+      - "8085:8085"
     environment:
-      - SERVER_PORT=8089
+      - SERVER_PORT=8085
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/database
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres

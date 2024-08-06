@@ -7,7 +7,7 @@ WORKDIR /app
 COPY target/mc-account-0.0.1-SNAPSHOT.jar myapp.jar
 
 # Открываем порт, на котором будет работать приложение
-EXPOSE 8089
+EXPOSE 8085
 
 # Запускаем приложение
 ENTRYPOINT ["java", "-jar", "myapp.jar"]

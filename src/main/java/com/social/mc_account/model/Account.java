@@ -75,9 +75,9 @@ public class Account {
     @Column(name = "emoji_status")
     private String emojiStatus;
 
-    //@CreationTimestamp НУЖНО ЛИ ЭТО ПОЛЕ???
-    //@Column(name = "created_on", updatable = false)
-    //private LocalDate createdOn;
+    @CreationTimestamp
+    @Column(name = "created_on", updatable = false)
+    private LocalDate createdOn;
 
     @UpdateTimestamp
     @Column(name = "update_on")
