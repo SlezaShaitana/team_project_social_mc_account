@@ -16,7 +16,7 @@ spring:
     show-sql: true
     dialect: org.hibernate.dialect.PostgreSQL8Dialect
     hikari:
-      connection-init-sql: create schema if not exists accounts
+      connection-init-sql: create schema if not exists account
       connection-timeout: 10000
 
   liquibase:
