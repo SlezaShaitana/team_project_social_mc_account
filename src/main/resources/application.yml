@@ -9,7 +9,7 @@ spring:
       ddl-auto: none
 
   datasource:
-    url: jdbc:postgresql://localhost:5435/database
+    url: jdbc:postgresql://localhost:5432/database
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -17,7 +17,7 @@ spring:
     dialect: org.hibernate.dialect.PostgreSQL8Dialect
     hikari:
       schema: account
-      connection-init-sql: create schema if not exists dialogs
+      connection-init-sql: create schema if not exists accounts
       connection-timeout: 10000
 
   liquibase:
