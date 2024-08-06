@@ -7,10 +7,12 @@ spring:
     open-in-view: true
     hibernate:
       ddl-auto: none
+
   datasource:
     url: jdbc:postgresql://localhost:5435/database
     username: postgres
     password: postgres
+    driver-class-name: org.postgresql.Driver
     show-sql: true
     dialect: org.hibernate.dialect.PostgreSQL8Dialect
     hikari:
@@ -18,12 +20,9 @@ spring:
       connection-init-sql: create schema if not exists dialogs
       connection-timeout: 10000
 
-
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.xml
-
-
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -42,7 +41,7 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8888/eureka/
-      register-with-eureka: true
-      fetch-registry: true
+    register-with-eureka: true
+    fetch-registry: true
   instance:
-      hostname: localhost
+    hostname: localhost
