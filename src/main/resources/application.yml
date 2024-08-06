@@ -13,10 +13,17 @@ spring:
     password: postgres
     show-sql: true
     dialect: org.hibernate.dialect.PostgreSQL8Dialect
+    hikari:
+      schema: account
+      connection-init-sql: create schema if not exists dialogs
+      connection-timeout: 10000
+
 
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.xml
+
+
 
   kafka:
     bootstrap-servers: localhost:9092
