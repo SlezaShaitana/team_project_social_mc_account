@@ -1,6 +1,7 @@
 spring:
   application:
     name: mc-account
+
   jpa:
     generate-ddl: false
     open-in-view: true
@@ -12,9 +13,11 @@ spring:
     password: postgres
     show-sql: true
     dialect: org.hibernate.dialect.PostgreSQL8Dialect
+
   liquibase:
     enabled: true
-    change-log: classpath:/db/changelog/changelog-master.xml
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+
   kafka:
     bootstrap-servers: localhost:9092
     kafkaMessageTopicForAccount: updateTopic
