@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AccountServiceImplTest" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+    <module name="mc-account" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.social.mc_account.service.AccountServiceImpl" />
+        <option name="ENABLED" value="false" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="com.social.mc_account.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="PACKAGE_NAME" value="com.social.mc_account" />
+    <option name="MAIN_CLASS_NAME" value="com.social.mc_account.AccountServiceImplTest" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="class" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

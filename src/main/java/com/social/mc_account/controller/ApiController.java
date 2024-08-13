@@ -58,11 +58,6 @@ public class ApiController {
         accountService.deleteAccountById(id);
     }
 
-    @GetMapping("/unsupported")
-    public List<AccountPageDTO> getAllAccounts(@RequestParam SearchDTO searchDTO, @RequestParam Page page) {
-        return accountService.getAllAccounts(searchDTO, page);
-    }
-
     @GetMapping("/statistic")
     public StatisticDTO getStatisticAccounts(@ModelAttribute StatisticRequestDTO requestDTO) {
         return accountService.getStatistic(requestDTO);
@@ -75,6 +70,6 @@ public class ApiController {
 
     @GetMapping("/search/statusCode")
     public AccountPageDTO getListAccountsByStatus(@ModelAttribute SearchDTO searchDTO, @ModelAttribute Page pageable) {
-        return accountService.getAccountsByStatusCode(searchDTO, pageable);
+        return accountService.getListAccounts(searchDTO, pageable);
     }
 }

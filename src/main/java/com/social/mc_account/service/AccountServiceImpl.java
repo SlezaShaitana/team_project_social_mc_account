@@ -9,6 +9,8 @@ import com.social.mc_account.repository.AccountRepository;
 import com.social.mc_account.security.JwtUtils;
 import com.social.mc_account.specification.AccountSpecification;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -26,6 +28,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor(force = true)
 @EnableAsync
 @Slf4j
 @ConditionalOnProperty(name = "scheduler.enabled", matchIfMissing = true)
@@ -149,18 +153,24 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Scheduled(cron = "0 0 0 * * ?")
     public void putNotification() {
-        List<BirthdayDTO> birthdayDTOs = accountRepository.findAll().stream()
+        List<NotificationDTO> birthdayDTOs = accountRepository.findAll().stream()
                 .filter(account -> LocalDate.now().equals(account.getBirthDate()))
                 .map(account -> {
-                    BirthdayDTO birthdayAccount = BirthdayDTO.builder()
-                            .firstName(account.getFirstName())
-                            .lastName(account.getLastName())
+                    NotificationDTO birthdayAccount = NotificationDTO.builder()
+                            .id(UUID.randomUUID())
+                            .authorId(account.getId())
+                            .content("С Днём Рождения!")
+                            .notificationType(NotificationType.BIRTHDAY)
+                            .sentTime(LocalDateTime.now())
+                            .serviceName(MicroServiceName.ACCOUNT)
+                            .eventId(UUID.randomUUID())
+                            .isReaded(false)
                             .build();
                     return birthdayAccount;
                 })
                 .collect(Collectors.toList());
 
-        for (BirthdayDTO birthdayDTO : birthdayDTOs) {
+        for (NotificationDTO birthdayDTO : birthdayDTOs) {
             producer.sendMessageForNotification(birthdayDTO);
         }
     }
@@ -194,19 +204,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<AccountPageDTO> getAllAccounts(SearchDTO searchDTO, Page page) {
-        List<Account> accounts = accountRepository.findAll();
-        log.info("All accounts received ");
-        return mapper.toPageDtoAccountsFromAccounts(accounts);
-    }
-
-    @Override
     public StatisticDTO getStatistic(StatisticRequestDTO statisticRequestDTO) {
         StatisticDTO statistics = new StatisticDTO();
         CountPerAgeDTO countPerAgeDTO = new CountPerAgeDTO();
         CountPerMonthDTO countPerMonthDTO = new CountPerMonthDTO();
 
-        List<Account> allAccount = accountRepository.findAll();
+        List<Account> allAccounts = accountRepository.findAll();
         LocalDate firstMonth = statisticRequestDTO.getFirstMonth();
         LocalDate lastMonth = statisticRequestDTO.getLastMonth();
         LocalDate birthDate = statisticRequestDTO.getDate();
@@ -216,22 +219,24 @@ public class AccountServiceImpl implements AccountService {
         int countPerAge = 0;
         int countPerMonth = 0;
 
-        for (Account account : allAccount) {
-            if (account.getBirthDate().equals(statisticRequestDTO.getDate())) {
+        for (Account account : allAccounts) {
+            if (account.getBirthDate() != null && Period.between(account.getBirthDate(), currentDate).getYears() == age) {
                 countPerAge++;
             }
-            if ((account.getRegDate().isEqual(firstMonth) || account.getRegDate().isAfter(firstMonth)) &&
-                    (account.getRegDate().isEqual(lastMonth) || account.getRegDate().isBefore(lastMonth))) {
+
+            if (account.getRegDate() != null &&
+                    !account.getRegDate().isBefore(firstMonth) &&
+                    !account.getRegDate().isAfter(lastMonth)) {
                 countPerMonth++;
             }
         }
-        int allCount = countPerAge + countPerMonth;
-        statistics.setCount(allCount);
-        statistics.setDate(statisticRequestDTO.getDate());
+
+        statistics.setDate(birthDate);
         countPerAgeDTO.setAge(age);
         countPerAgeDTO.setCount(countPerAge);
         countPerMonthDTO.setCount(countPerMonth);
-        countPerMonthDTO.setDate(statisticRequestDTO.getDate());
+
+        statistics.setCount(countPerMonth);
         statistics.setCountPerAgeDTO(countPerAgeDTO);
         statistics.setCountPerMonthDTO(countPerMonthDTO);
 
@@ -244,6 +249,11 @@ public class AccountServiceImpl implements AccountService {
         Sort sort = Sort.unsorted();
         Pageable pageable = PageRequest.of(pageDto.getPage(), pageDto.getSize(), sort);
         org.springframework.data.domain.Page<Account> accountsPage = accountRepository.findAll(AccountSpecification.findWithFilter(searchDTO), pageable);
+
+        if (accountsPage == null) {
+            throw new IllegalStateException("Page cannot be null");
+        }
+
         List<Account> accounts = accountsPage.getContent();
 
         log.info("Accounts found: " + accounts.size());
@@ -275,58 +285,6 @@ public class AccountServiceImpl implements AccountService {
         boolean empty = accountsPage.isEmpty();
 
         log.info("List accounts received");
-
-        return AccountPageDTO.builder()
-                .totalElements(totalElements)
-                .totalPages(totalPages)
-                .sortDTO(sortDTO)
-                .numberOfElements(numberOfElements)
-                .pageable(pageableDTO)
-                .first(isFirst)
-                .last(isLast)
-                .size(size)
-                .accountMeDTO(mapper.toAccountsMeDtoForAccounts(accounts))
-                .number(number)
-                .empty(empty)
-                .build();
-    }
-
-    @Override
-    public AccountPageDTO getAccountsByStatusCode(SearchDTO searchDTO, Page pageDto) {
-        Sort sort = Sort.unsorted();
-        Pageable pageable = PageRequest.of(pageDto.getPage(), pageDto.getSize(), sort);
-        org.springframework.data.domain.Page<Account> accountsPage = accountRepository.findAll(AccountSpecification.byStatusCode(searchDTO.getStatusCode()), pageable);
-        List<Account> accounts = accountsPage.getContent();
-
-        log.info("Accounts found by statusCode: " + accounts.size());
-        accounts.forEach(account -> log.info("Account: " + account));
-
-        int totalPages = accountsPage.getTotalPages();
-        long totalElements = accountsPage.getTotalElements();
-        int numberOfElements = accountsPage.getNumberOfElements();
-
-        SortDTO sortDTO = SortDTO.builder()
-                .unsorted(sort.isUnsorted())
-                .sorted(sort.isSorted())
-                .empty(sort.isEmpty())
-                .build();
-
-        PageableDTO pageableDTO = PageableDTO.builder()
-                .sortDTO(sortDTO)
-                .unpaged(pageable.isUnpaged())
-                .paged(pageable.isPaged())
-                .pageSize(pageable.getPageSize())
-                .pageNumber(pageable.getPageNumber())
-                .offset((int) pageable.getOffset())
-                .build();
-
-        boolean isFirst = accountsPage.isFirst();
-        boolean isLast = accountsPage.isLast();
-        int size = accounts.size();
-        int number = accountsPage.getNumber();
-        boolean empty = accountsPage.isEmpty();
-
-        log.info("List accounts received by statusCode");
 
         return AccountPageDTO.builder()
                 .totalElements(totalElements)

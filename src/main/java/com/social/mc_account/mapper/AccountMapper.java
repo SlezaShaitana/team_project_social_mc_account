@@ -12,5 +12,4 @@ public interface AccountMapper {
     List<AccountMeDTO> toAccountsMeDtoForAccounts(List<Account> accounts);
     AccountDataDTO toAccountDataDtoFromAccount(Account account);
     List<AccountPageDTO> toPageDtoAccountsFromAccounts(List<Account> accounts);
-
 }

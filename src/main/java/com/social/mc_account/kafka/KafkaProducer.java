@@ -1,6 +1,6 @@
 package com.social.mc_account.kafka;
 
-import com.social.mc_account.dto.BirthdayDTO;
+import com.social.mc_account.dto.NotificationDTO;
 import com.social.mc_account.dto.AccountDtoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +22,7 @@ public class KafkaProducer {
         kafkaTemplate.send(kafkaMessageTopicForAccount, data);
     }
 
-    public void sendMessageForNotification(BirthdayDTO data) {
+    public void sendMessageForNotification(NotificationDTO data) {
         kafkaTemplate.send(kafkaMessageTopicForNotification, data);
     }
 }

@@ -13,8 +13,6 @@ public interface AccountService {
     void putNotification();
     AccountDataDTO getDataById(UUID id);
     void deleteAccountById(UUID id);
-    List<AccountPageDTO> getAllAccounts(SearchDTO searchDTO, Page page);
     StatisticDTO getStatistic(StatisticRequestDTO statisticRequestDTO);
     AccountPageDTO getListAccounts(SearchDTO searchDTO, Page pageDto);
-    AccountPageDTO getAccountsByStatusCode(SearchDTO searchDTO, Page page);
 }

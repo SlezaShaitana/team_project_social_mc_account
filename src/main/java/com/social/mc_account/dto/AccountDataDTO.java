@@ -9,6 +9,7 @@ public class AccountDataDTO {
     private UUID id;
     private boolean isDeleted;
     private String firstName;
+    private String lastName;
     private String email;
     private String role;
     private List<AuthorityDTO> authorities;

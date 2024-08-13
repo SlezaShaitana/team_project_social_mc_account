@@ -5,6 +5,8 @@ import java.util.*;
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class AccountMeDTO {
     private UUID id;
@@ -31,4 +33,7 @@ public class AccountMeDTO {
     private LocalDateTime createdOn;
     private LocalDateTime updatedOn;
     private LocalDateTime deletionTimestamp;
+
+    public AccountMeDTO(UUID uuid, String mail, String john, String doe, String photoUrl, String aboutMe, Role role, boolean b, boolean b1) {
+    }
 }
