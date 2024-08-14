@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@AllArgsConstructor
-@NoArgsConstructor(force = true)
 @EnableAsync
 @Slf4j
 @ConditionalOnProperty(name = "scheduler.enabled", matchIfMissing = true)
@@ -37,7 +35,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountMapper mapper;
     private final JwtUtils jwtUtils;
-    private KafkaProducer producer;
+    private final KafkaProducer producer;
 
     @Override
     public AccountDataDTO getDataAccount(String authorization, String email) {
