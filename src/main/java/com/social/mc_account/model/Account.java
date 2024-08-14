@@ -26,11 +26,11 @@ public class Account {
     @Column(unique = true, nullable = false)
     private UUID id;
 
-    @Column(name = "first_name",nullable = false)
-    private String firstName;
+    @Column(nullable = false)
+    private String first_name;
 
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
+    @Column(nullable = false)
+    private String last_name;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -71,19 +71,17 @@ public class Account {
 
     private boolean is_blocked;
 
-    @Column(name = "emoji_status")
     private String emoji_status;
 
     @CreationTimestamp
-    @Column(name = "create_on", updatable = false)
-    private LocalDate createdOn;
+    @Column(updatable = false)
+    private LocalDate create_on;
 
     @UpdateTimestamp
-    @Column(name = "update_on")
-    private LocalDate updatedOn;
+    private LocalDate update_on;
 
     private LocalDate deletion_timestamp;
 
-    @Column(name = "is_deleted", nullable = false)
+    @Column(nullable = false)
     private boolean isDeleted;
 }
