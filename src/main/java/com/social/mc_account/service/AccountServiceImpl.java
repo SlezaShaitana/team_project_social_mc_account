@@ -220,9 +220,9 @@ public class AccountServiceImpl implements AccountService {
                 countPerAge++;
             }
 
-            if (account.getRegDate() != null &&
-                    !account.getRegDate().isBefore(firstMonth) &&
-                    !account.getRegDate().isAfter(lastMonth)) {
+            if (account.getReg_date() != null &&
+                    !account.getReg_date().isBefore(firstMonth) &&
+                    !account.getReg_date().isAfter(lastMonth)) {
                 countPerMonth++;
             }
         }
