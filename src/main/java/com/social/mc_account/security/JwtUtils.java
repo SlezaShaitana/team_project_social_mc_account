@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @Slf4j
@@ -18,19 +17,27 @@ public class JwtUtils {
     private String secret;
 
 
-    public String getId(String token){
-        return Jwts.parser().verifyWith(createSecretKey(secret)).build()
-                .parseSignedClaims(token.substring(7)).getPayload().get("id", String.class);
+    public String getId(String token) {
+        return getClaimsFromToken(token).get("id", String.class);
     }
 
-    public String getEmail(String token){
-        return Jwts.parser().verifyWith(createSecretKey(secret))
-                .build().parseSignedClaims(token.substring(7)).getPayload().get("email", String.class);
+    public String getEmail(String token) {
+        return getClaimsFromToken(token).get("email", String.class);
     }
 
     public List<String> getRoles(String token) {
-        return Jwts.parser().verifyWith(createSecretKey(secret))
-                .build().parseSignedClaims(token.substring(7)).getPayload().get("roles", List.class);
+        return getClaimsFromToken(token).get("roles", List.class);
+    }
+
+    private Claims getClaimsFromToken(String token) {
+        String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+
+        JwtParser jwtParser = Jwts.parser()
+                .setSigningKey(createSecretKey(secret))
+                .build();
+
+        Jws<Claims> claimsJws = jwtParser.parseClaimsJws(cleanToken);
+        return claimsJws.getBody();
     }
 
     public static SecretKey createSecretKey(String secret) {
