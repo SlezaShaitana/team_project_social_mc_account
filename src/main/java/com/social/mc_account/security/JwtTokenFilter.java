@@ -24,12 +24,23 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
     private final JwtValidation jwtValidation;
 
+    private String getToken(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7);
+        }
+        log.error("Request is empty or damaged");
+        throw new IllegalArgumentException("Authorization header is missing or malformed");
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String token = getToken(request);
             log.info("token: {}", token);
             if (token != null && jwtValidation.validateToken(token)) {
+                log.info("jwtValidate.validateToken: {}", token);
                 String email = jwtUtils.getEmail(token);
                 List<String> roles = jwtUtils.getRoles(token);
 
@@ -51,15 +62,5 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             log.error("JWT token validation failed");
         }
         filterChain.doFilter(request, response);
-    }
-
-    private String getToken(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
-
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7);
-        }
-        log.error("Request is empty or damaged");
-        throw new IllegalArgumentException("Authorization header is missing or malformed");
     }
 }
