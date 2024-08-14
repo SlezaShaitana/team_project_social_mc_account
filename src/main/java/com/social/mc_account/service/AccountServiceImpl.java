@@ -53,7 +53,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountMeDTO updateAccount(AccountMeDTO accountMeDTO) {
         Account account = mapper.toAccountFromAccountMeDto(accountMeDTO);
-        account.setUpdatedOn(LocalDate.now());
+        account.setUpdate_on(LocalDate.now());
         accountRepository.save(account);
 
         AccountDtoRequest accountDtoRequest = AccountDtoRequest.builder()
