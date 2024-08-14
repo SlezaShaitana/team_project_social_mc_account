@@ -30,7 +30,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String headerAuth = request.getHeader("Authorization");
 
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7).trim();
+            return headerAuth.substring(7);
         }
         log.error("Request is empty or damaged");
         throw new IllegalArgumentException("Authorization header is missing or malformed");
