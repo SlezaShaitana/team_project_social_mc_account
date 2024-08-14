@@ -11,27 +11,38 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
+import io.jsonwebtoken.JwtParserBuilder;
+import io.jsonwebtoken.Jwts;
 
 @Component
 @Slf4j
 public class JwtUtils {
+
     @Value("${app.jwt.secret}")
     private String secret;
-
+    private JwtParserBuilder getJwtParserBuilder() {
+        return Jwts.parser().setSigningKey(createSecretKey(secret));
+    }
 
     public UUID getId(String token){
-        return Jwts.parser().verifyWith(createSecretKey(secret))
-                .build().parseSignedClaims(token).getPayload().get("id", UUID.class);
+        return getJwtParserBuilder().build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("id", UUID.class);
     }
 
     public String getEmail(String token){
-        return Jwts.parser().verifyWith(createSecretKey(secret))
-                .build().parseSignedClaims(token).getPayload().get("email", String.class);
+        return getJwtParserBuilder().build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("email", String.class);
     }
 
     public List<String> getRoles(String token) {
-        return Jwts.parser().verifyWith(createSecretKey(secret))
-                .build().parseSignedClaims(token).getPayload().get("roles", List.class);
+        return getJwtParserBuilder().build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("roles", List.class);
     }
 
     public static SecretKey createSecretKey(String secret) {
