@@ -28,9 +28,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String token = getToken(request);
-            if (token != null && jwtValidation.validateToken(token)) {
+            log.info("token: {}", token);
+            if (jwtValidation.validateToken(token)) {
                 String email = jwtUtils.getEmail(token);
                 List<String> roles = jwtUtils.getRoles(token);
+
+                log.info("email: {}", email);
+                log.info("roles: {}", roles);
 
                 Collection<? extends GrantedAuthority> authorities = roles.stream()
                         .map(SimpleGrantedAuthority::new)
