@@ -29,8 +29,8 @@
             <column name="isOnline" type="BOOLEAN"/>
             <column name="isBlocked" type="BOOLEAN"/>
             <column name="emojiStatus" type="VARCHAR(255)"/>
-            <column name="createOn" type="DATE"/>
-            <column name="updateOn" type="DATE"/>
+            <column name="create_on" type="DATE"/>
+            <column name="update_on" type="DATE"/>
             <column name="deletionTimesStamp" type="DATE"/>
         </createTable>
     </changeSet>
