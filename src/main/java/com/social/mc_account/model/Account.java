@@ -80,7 +80,7 @@ public class Account {
     private String emojiStatus;
 
     @CreationTimestamp
-    @Column(name = "created_on", updatable = false)
+    @Column(name = "create_on", updatable = false)
     private LocalDate createdOn;
 
     @UpdateTimestamp
