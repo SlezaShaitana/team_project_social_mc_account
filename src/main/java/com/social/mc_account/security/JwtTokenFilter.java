@@ -1,6 +1,7 @@
 package com.social.mc_account.security;
 
 import com.social.mc_account.feign.JwtValidation;
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +22,7 @@ import jakarta.servlet.http.*;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtTokenFilter extends OncePerRequestFilter {
+
     private final JwtUtils jwtUtils;
     private final JwtValidation jwtValidation;
 
@@ -35,10 +37,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         try {
             String token = getToken(request);
-            log.info("token: {}", token);
+            log.info("token: '{}'", token);
             if (jwtValidation.validateToken(token)) {
                 log.info("jwtValidate.validateToken: {}", token);
                 String email = jwtUtils.getEmail(token);
@@ -58,8 +61,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token format: {}", e.getMessage());
         } catch (Exception e) {
-            log.error("JWT token validation failed");
+            log.error("JWT token validation failed: {}", e.getMessage());
         }
         filterChain.doFilter(request, response);
     }
