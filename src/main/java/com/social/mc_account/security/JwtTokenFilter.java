@@ -39,7 +39,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         try {
             String token = getToken(request);
             log.info("token: {}", token);
-            if (token != null && jwtValidation.validateToken(token)) {
+            if (jwtValidation.validateToken(token)) {
                 log.info("jwtValidate.validateToken: {}", token);
                 String email = jwtUtils.getEmail(token);
                 List<String> roles = jwtUtils.getRoles(token);
