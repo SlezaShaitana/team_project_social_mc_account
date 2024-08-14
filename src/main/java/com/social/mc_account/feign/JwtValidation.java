@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(value = "JwtValidation", url = "http://localhost:8086")
 public interface JwtValidation {
-
-    @RequestMapping(method = RequestMethod.GET, value = "/api/v1/auth/check-validation")
+    @RequestMapping(method = RequestMethod.GET, value = "/check-validation")
     Boolean validateToken(@RequestParam("token") String token);
-
 }
