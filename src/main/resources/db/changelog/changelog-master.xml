@@ -17,18 +17,18 @@
             <column name="password" type="VARCHAR(255)"/>
             <column name="phone" type="VARCHAR(255)"/>
             <column name="photo" type="VARCHAR(255)"/>
-            <column name="profileCover" type="VARCHAR(255)"/>
+            <column name="profile_cover" type="VARCHAR(255)"/>
             <column name="about" type="TEXT"/>
             <column name="city" type="VARCHAR(255)"/>
             <column name="country" type="VARCHAR(255)"/>
-            <column name="statusCode" type="VARCHAR(255)"/>
-            <column name="regDate" type="DATE"/>
+            <column name="status_code" type="VARCHAR(255)"/>
+            <column name="reg_date" type="DATE"/>
             <column name="birth_date" type="DATE"/>
-            <column name="messagePermission" type="VARCHAR(255)"/>
-            <column name="lastOnlineTime" type="DATE"/>
-            <column name="isOnline" type="BOOLEAN"/>
-            <column name="isBlocked" type="BOOLEAN"/>
-            <column name="emojiStatus" type="VARCHAR(255)"/>
+            <column name="message_permission" type="VARCHAR(255)"/>
+            <column name="last_online_time" type="DATE"/>
+            <column name="is_online" type="BOOLEAN"/>
+            <column name="is_blocked" type="BOOLEAN"/>
+            <column name="emoji_status" type="VARCHAR(255)"/>
             <column name="create_on" type="DATE"/>
             <column name="update_on" type="DATE"/>
             <column name="deletion_timestamp" type="DATE"/>

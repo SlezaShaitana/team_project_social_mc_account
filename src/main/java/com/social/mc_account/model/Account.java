@@ -46,8 +46,7 @@ public class Account {
 
     private String photo;
 
-    @Column(name = "profile_cover")
-    private String profileCover;
+    private String profile_cover;
 
     private String about;
 
@@ -56,28 +55,24 @@ public class Account {
     private String country;
 
     @Column(name = "status_code")
-    private String statusCode;
+    private String status_code;
 
     @CreatedDate
-    @Column(name = "reg_date", updatable = false)
-    private LocalDate regDate;
+    @Column(updatable = false)
+    private LocalDate reg_date;
 
     private LocalDate birth_date;
 
-    @Column(name = "message_permission")
-    private String messagePermission;
+    private String message_permission;
 
-    @Column(name = "last_online_time")
-    private LocalDate lastOnlineTime;
+    private LocalDate last_online_time;
 
-    @Column(name = "is_online")
-    private boolean isOnline;
+    private boolean is_online;
 
-    @Column(name = "is_blocked")
-    private boolean isBlocked;
+    private boolean is_blocked;
 
     @Column(name = "emoji_status")
-    private String emojiStatus;
+    private String emoji_status;
 
     @CreationTimestamp
     @Column(name = "create_on", updatable = false)
