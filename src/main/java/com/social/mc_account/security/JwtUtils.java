@@ -1,6 +1,8 @@
 package com.social.mc_account.security;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -31,7 +33,7 @@ public class JwtUtils {
     }
 
     public static SecretKey createSecretKey(String secret) {
-        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
-        return new SecretKeySpec(keyBytes, 0, keyBytes.length, "HmacSHA256");
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }
