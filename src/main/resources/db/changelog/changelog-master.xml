@@ -31,7 +31,7 @@
             <column name="emojiStatus" type="VARCHAR(255)"/>
             <column name="create_on" type="DATE"/>
             <column name="update_on" type="DATE"/>
-            <column name="deletionTimesStamp" type="DATE"/>
+            <column name="deletion_timestamp" type="DATE"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

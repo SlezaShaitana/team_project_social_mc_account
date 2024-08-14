@@ -87,8 +87,7 @@ public class Account {
     @Column(name = "update_on")
     private LocalDate updatedOn;
 
-    @Column(name = "deletion_timestamp")
-    private LocalDate deletionTimestamp;
+    private LocalDate deletion_timestamp;
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
