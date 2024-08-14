@@ -10,6 +10,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -17,9 +18,10 @@ public class JwtUtils {
     @Value("${app.jwt.secret}")
     private String secret;
 
-    public String getId(String token){
-        return Jwts.parser().verifyWith(createSecretKey(secret)).build()
-                .parseSignedClaims(token).getPayload().getId();
+
+    public UUID getId(String token){
+        return Jwts.parser().verifyWith(createSecretKey(secret))
+                .build().parseSignedClaims(token).getPayload().get("id", UUID.class);
     }
 
     public String getEmail(String token){
