@@ -24,11 +24,9 @@ public class JwtUtils {
         return Jwts.parser().setSigningKey(createSecretKey(secret));
     }
 
-    public UUID getId(String token){
-        return getJwtParserBuilder().build()
-                .parseClaimsJws(token)
-                .getBody()
-                .get("id", UUID.class);
+    public String getId(String token){
+        return Jwts.parser().verifyWith(createSecretKey(secret)).build()
+                .parseSignedClaims(token).getPayload().get("id", String.class);
     }
 
     public String getEmail(String token){
