@@ -210,7 +210,7 @@ public class AccountServiceImplTest {
                 .role(Role.USER)
                 .build();
 
-        when(jwtUtils.getId(authorization)).thenReturn(UUID.fromString(id.toString()));
+        when(jwtUtils.getId(authorization)).thenReturn(String.valueOf(UUID.fromString(id.toString())));
         when(accountRepository.findById(id)).thenReturn(Optional.of(account));
         when(mapper.toAccountMeDtoForAccount(account)).thenReturn(accountMeDTO);
 
@@ -228,7 +228,7 @@ public class AccountServiceImplTest {
         String authorization = "Bearer some-valid-jwt-token";
         UUID id = UUID.randomUUID();
 
-        when(jwtUtils.getId(authorization)).thenReturn(UUID.fromString(id.toString()));
+        when(jwtUtils.getId(authorization)).thenReturn(String.valueOf(UUID.fromString(id.toString())));
         when(accountRepository.findById(id)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
@@ -276,7 +276,7 @@ public class AccountServiceImplTest {
                 .role(updatedAccount.getRole())
                 .build();
 
-        when(jwtUtils.getId(authorization)).thenReturn(UUID.fromString(accountId.toString()));
+        when(jwtUtils.getId(authorization)).thenReturn(String.valueOf(UUID.fromString(accountId.toString())));
         when(accountRepository.findById(accountId)).thenReturn(Optional.of(existingAccount));
         when(mapper.toAccountFromAccountMeDto(accountMeDTO)).thenReturn(updatedAccount);
         when(accountRepository.save(updatedAccount)).thenReturn(updatedAccount);
@@ -306,7 +306,7 @@ public class AccountServiceImplTest {
                 .role(Role.USER)
                 .build();
 
-        when(jwtUtils.getId(authorization)).thenReturn(UUID.fromString(accountId.toString()));
+        when(jwtUtils.getId(authorization)).thenReturn(String.valueOf(UUID.fromString(accountId.toString())));
         when(accountRepository.findById(accountId)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
@@ -337,7 +337,7 @@ public class AccountServiceImplTest {
                 .isDeleted(false)
                 .build();
 
-        when(jwtUtils.getId(authorization)).thenReturn(UUID.fromString(accountId.toString()));
+        when(jwtUtils.getId(authorization)).thenReturn(String.valueOf(UUID.fromString(accountId.toString())));
         when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
 
         accountService.deleteAccount(authorization);
@@ -356,7 +356,7 @@ public class AccountServiceImplTest {
         String authorization = "Bearer some-valid-jwt-token";
         UUID accountId = UUID.randomUUID();
 
-        when(jwtUtils.getId(authorization)).thenReturn(UUID.fromString(accountId.toString()));
+        when(jwtUtils.getId(authorization)).thenReturn(String.valueOf(UUID.fromString(accountId.toString())));
         when(accountRepository.findById(accountId)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {

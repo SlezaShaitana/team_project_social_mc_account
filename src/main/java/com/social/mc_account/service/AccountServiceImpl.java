@@ -87,7 +87,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountMeDTO getDataMyAccount(String authorization) {
-        UUID id = jwtUtils.getId(authorization);
+        UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalAccount = accountRepository.findById(id);
 
         if (optionalAccount.isPresent()) {
@@ -101,7 +101,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO) {
-        UUID id = jwtUtils.getId(authorization);
+        UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalAccount = accountRepository.findById(id);
 
         if (optionalAccount.isPresent()) {
@@ -126,7 +126,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Async
     public void deleteAccount(String authorization) throws InterruptedException {
-        UUID id = jwtUtils.getId(authorization);
+        UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalUser = accountRepository.findById(id);
 
         if (optionalUser.isPresent()) {
