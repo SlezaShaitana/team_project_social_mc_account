@@ -62,7 +62,7 @@ public class Account {
     @Column(name = "reg_date", updatable = false)
     private LocalDate regDate;
 
-    private LocalDate birthDate;
+    private LocalDate birth_date;
 
     @Column(name = "message_permission")
     private String messagePermission;

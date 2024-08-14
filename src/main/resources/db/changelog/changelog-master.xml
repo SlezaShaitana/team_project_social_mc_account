@@ -23,7 +23,7 @@
             <column name="country" type="VARCHAR(255)"/>
             <column name="statusCode" type="VARCHAR(255)"/>
             <column name="regDate" type="DATE"/>
-            <column name="birthDate" type="DATE"/>
+            <column name="birth_date" type="DATE"/>
             <column name="messagePermission" type="VARCHAR(255)"/>
             <column name="lastOnlineTime" type="DATE"/>
             <column name="isOnline" type="BOOLEAN"/>
