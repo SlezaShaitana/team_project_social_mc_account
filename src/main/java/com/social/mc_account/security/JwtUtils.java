@@ -1,18 +1,14 @@
 package com.social.mc_account.security;
 
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
-import io.jsonwebtoken.JwtParserBuilder;
-import io.jsonwebtoken.Jwts;
 
 @Component
 @Slf4j
@@ -24,23 +20,40 @@ public class JwtUtils {
         return Jwts.parser().setSigningKey(createSecretKey(secret));
     }
 
-    public String getId(String token){
-        return Jwts.parser().verifyWith(createSecretKey(secret)).build()
-                .parseSignedClaims(token).getPayload().get("id", String.class);
+    public UUID getId(String token) {
+        try {
+            return getJwtParserBuilder().build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .get("id", UUID.class);
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
+            log.error("Invalid JWT Token: {}", e.getMessage());
+            throw new IllegalArgumentException("Invalid JWT token", e);
+        }
     }
 
-    public String getEmail(String token){
-        return getJwtParserBuilder().build()
-                .parseClaimsJws(token)
-                .getBody()
-                .get("email", String.class);
+    public String getEmail(String token) {
+        try {
+            return getJwtParserBuilder().build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .get("email", String.class);
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
+            log.error("Invalid JWT Token: {}", e.getMessage());
+            throw new IllegalArgumentException("Invalid JWT token", e);
+        }
     }
 
     public List<String> getRoles(String token) {
-        return getJwtParserBuilder().build()
-                .parseClaimsJws(token)
-                .getBody()
-                .get("roles", List.class);
+        try {
+            return getJwtParserBuilder().build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .get("roles", List.class);
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
+            log.error("Invalid JWT Token: {}", e.getMessage());
+            throw new IllegalArgumentException("Invalid JWT token", e);
+        }
     }
 
     public static SecretKey createSecretKey(String secret) {
