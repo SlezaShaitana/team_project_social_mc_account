@@ -54,9 +54,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountMeDTO updateAccount(AccountMeDTO accountMeDTO) {
-        Account account = accountRepository.findById(accountMeDTO.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Account with ID " + accountMeDTO.getId() + " not found"));
-        account = mapper.toAccountFromAccountMeDto(accountMeDTO);
+        Account account = mapper.toAccountFromAccountMeDto(accountMeDTO);
         account.setUpdatedOn(LocalDate.now());
         accountRepository.save(account);
 
