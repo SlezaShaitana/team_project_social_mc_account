@@ -29,7 +29,7 @@ public class ApiController {
     }
 
     @GetMapping("/me")
-    public AccountMeDTO getDataMyAccount(@RequestHeader String authorization) {
+    public AccountMeDTO getDataMyAccount(@RequestHeader("Authorization") String authorization) {
          return accountService.getDataMyAccount(authorization);
     }
 

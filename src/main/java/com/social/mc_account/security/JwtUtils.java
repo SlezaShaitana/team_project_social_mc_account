@@ -16,44 +16,21 @@ public class JwtUtils {
 
     @Value("${app.jwt.secret}")
     private String secret;
-    private JwtParserBuilder getJwtParserBuilder() {
-        return Jwts.parser().setSigningKey(createSecretKey(secret));
+
+
+    public String getId(String token){
+        return Jwts.parser().verifyWith(createSecretKey(secret)).build()
+                .parseSignedClaims(token.substring(7)).getPayload().get("id", String.class);
     }
 
-    public UUID getId(String token) {
-        try {
-            return getJwtParserBuilder().build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .get("id", UUID.class);
-        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            log.error("Invalid JWT Token: {}", e.getMessage());
-            throw new IllegalArgumentException("Invalid JWT token", e);
-        }
-    }
-
-    public String getEmail(String token) {
-        try {
-            return getJwtParserBuilder().build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .get("email", String.class);
-        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            log.error("Invalid JWT Token: {}", e.getMessage());
-            throw new IllegalArgumentException("Invalid JWT token", e);
-        }
+    public String getEmail(String token){
+        return Jwts.parser().verifyWith(createSecretKey(secret))
+                .build().parseSignedClaims(token.substring(7)).getPayload().get("email", String.class);
     }
 
     public List<String> getRoles(String token) {
-        try {
-            return getJwtParserBuilder().build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .get("roles", List.class);
-        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            log.error("Invalid JWT Token: {}", e.getMessage());
-            throw new IllegalArgumentException("Invalid JWT token", e);
-        }
+        return Jwts.parser().verifyWith(createSecretKey(secret))
+                .build().parseSignedClaims(token.substring(7)).getPayload().get("roles", List.class);
     }
 
     public static SecretKey createSecretKey(String secret) {
