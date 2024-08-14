@@ -150,7 +150,7 @@ public class AccountServiceImpl implements AccountService {
     @Scheduled(cron = "0 0 0 * * ?")
     public void putNotification() {
         List<NotificationDTO> birthdayDTOs = accountRepository.findAll().stream()
-                .filter(account -> LocalDate.now().equals(account.getBirthDate()))
+                .filter(account -> LocalDate.now().equals(account.getBirth_date()))
                 .map(account -> {
                     NotificationDTO birthdayAccount = NotificationDTO.builder()
                             .id(UUID.randomUUID())
@@ -216,7 +216,7 @@ public class AccountServiceImpl implements AccountService {
         int countPerMonth = 0;
 
         for (Account account : allAccounts) {
-            if (account.getBirthDate() != null && Period.between(account.getBirthDate(), currentDate).getYears() == age) {
+            if (account.getBirth_date() != null && Period.between(account.getBirth_date(), currentDate).getYears() == age) {
                 countPerAge++;
             }
 
