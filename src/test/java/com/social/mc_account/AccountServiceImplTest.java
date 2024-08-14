@@ -376,11 +376,11 @@ public class AccountServiceImplTest {
         LocalDate today = LocalDate.now();
         Account account1 = Account.builder()
                 .id(UUID.randomUUID())
-                .birthDate(today)
+                .birth_date(today)
                 .build();
         Account account2 = Account.builder()
                 .id(UUID.randomUUID())
-                .birthDate(today)
+                .birth_date(today)
                 .build();
 
         List<Account> accounts = Arrays.asList(account1, account2);
@@ -509,10 +509,10 @@ public class AccountServiceImplTest {
         statisticRequestDTO.setLastMonth(lastMonth);
 
         List<Account> accounts = new ArrayList<>();
-        accounts.add(Account.builder().birthDate(birthDate).regDate(LocalDate.of(2023, 3, 15)).build());
-        accounts.add(Account.builder().birthDate(birthDate).regDate(LocalDate.of(2023, 7, 20)).build());
-        accounts.add(Account.builder().birthDate(LocalDate.of(1985, 5, 10)).regDate(LocalDate.of(2022, 12, 25)).build());
-        accounts.add(Account.builder().birthDate(LocalDate.of(1995, 9, 30)).regDate(LocalDate.of(2023, 5, 10)).build());
+        accounts.add(Account.builder().birth_date(birthDate).regDate(LocalDate.of(2023, 3, 15)).build());
+        accounts.add(Account.builder().birth_date(birthDate).regDate(LocalDate.of(2023, 7, 20)).build());
+        accounts.add(Account.builder().birth_date(LocalDate.of(1985, 5, 10)).regDate(LocalDate.of(2022, 12, 25)).build());
+        accounts.add(Account.builder().birth_date(LocalDate.of(1995, 9, 30)).regDate(LocalDate.of(2023, 5, 10)).build());
 
         when(accountRepository.findAll()).thenReturn(accounts);
 
@@ -539,8 +539,8 @@ public class AccountServiceImplTest {
         statisticRequestDTO.setLastMonth(lastMonth);
 
         List<Account> accounts = new ArrayList<>();
-        accounts.add(Account.builder().birthDate(LocalDate.of(1985, 5, 10)).regDate(LocalDate.of(2022, 12, 25)).build());
-        accounts.add(Account.builder().birthDate(LocalDate.of(1995, 9, 30)).regDate(LocalDate.of(2023, 5, 10)).build());
+        accounts.add(Account.builder().birth_date(LocalDate.of(1985, 5, 10)).regDate(LocalDate.of(2022, 12, 25)).build());
+        accounts.add(Account.builder().birth_date(LocalDate.of(1995, 9, 30)).regDate(LocalDate.of(2023, 5, 10)).build());
 
         when(accountRepository.findAll()).thenReturn(accounts);
 
