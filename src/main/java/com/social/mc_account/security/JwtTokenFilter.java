@@ -29,7 +29,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         try {
             String token = getToken(request);
             log.info("token: {}", token);
-            if (jwtValidation.validateToken(token)) {
+            if (token != null && jwtValidation.validateToken(token)) {
                 String email = jwtUtils.getEmail(token);
                 List<String> roles = jwtUtils.getRoles(token);
 
@@ -54,12 +54,23 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private String getToken(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
+        String headerAuth = request.getHeader("Set-Cookie");
 
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7);
+
+        log.info("headerAuth: {}", headerAuth);
+        // Разделяем строку по разделителю ";"
+        String[] parts = headerAuth.split(";");
+
+        // Находим часть, содержащую Refresh_token
+        for (String part : parts) {
+            if (part.trim().startsWith("Refresh_token=")) {
+                // Извлекаем значение токена
+                log.info("Refresh token: {}", part);
+                String token = part.split("=")[1].trim();
+                System.out.println("Refresh_token: " + token);
+                return token;
+            }
         }
-        log.error("Request is empty or damaged");
-        throw new IllegalArgumentException("Authorization header is missing or malformed");
+        return null;
     }
 }
