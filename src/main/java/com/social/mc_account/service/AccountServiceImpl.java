@@ -69,6 +69,12 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public AccountMeDTO createAccount(RegistrationDto registrationDto) {
+        Optional<Account> existingAccount = Optional.ofNullable(accountRepository.findByEmail(registrationDto.getEmail()));
+
+        if (existingAccount.isPresent()) {
+            throw new IllegalArgumentException("Account with email " + registrationDto.getEmail() + " already exists");
+        }
+
         Account account = Account.builder()
                 .id(registrationDto.getUuid())
                 .password(registrationDto.getPassword1())
