@@ -40,7 +40,7 @@ public class KafkaConfiguration {
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
-        return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), new JsonSerializer<>(objectMapper));
+        return new DefaultKafkaProducerFactory<>(config);
     }
 
     @Bean
@@ -58,7 +58,7 @@ public class KafkaConfiguration {
         config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaMessageGroupId);
         config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(objectMapper));
+        return new DefaultKafkaConsumerFactory<>(config);
     }
 
     @Bean
