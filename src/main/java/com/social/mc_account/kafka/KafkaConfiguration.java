@@ -1,7 +1,6 @@
 package com.social.mc_account.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.social.mc_account.dto.RegistrationDto;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -52,7 +51,7 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public ConsumerFactory<String, RegistrationDto> kafkaAccountConsumerFactory(){
+    public ConsumerFactory<String, Object> kafkaAccountConsumerFactory(){
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
