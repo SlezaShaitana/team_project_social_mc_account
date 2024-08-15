@@ -24,7 +24,7 @@ public class ApiController {
     }
 
     @PostMapping
-    public AccountMeDTO createAccount(@RequestBody AccountDtoRequest accountDtoRequest) {
+    public AccountMeDTO createAccount(@RequestBody RegistrationDto accountDtoRequest) {
         return accountService.createAccount(accountDtoRequest);
     }
 

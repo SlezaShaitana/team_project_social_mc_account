@@ -9,8 +9,6 @@ import com.social.mc_account.repository.AccountRepository;
 import com.social.mc_account.security.JwtUtils;
 import com.social.mc_account.specification.AccountSpecification;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -56,8 +54,8 @@ public class AccountServiceImpl implements AccountService {
         account.setUpdate_on(LocalDate.now());
         accountRepository.save(account);
 
-        AccountDtoRequest accountDtoRequest = AccountDtoRequest.builder()
-                .id(account.getId())
+        RegistrationDto accountDtoRequest = RegistrationDto.builder()
+                .uuid(account.getId())
                 .email(account.getEmail())
                 .role(account.getRole())
                 .build();
@@ -70,14 +68,15 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public AccountMeDTO createAccount(AccountDtoRequest accountDtoRequest) {
+    public AccountMeDTO createAccount(RegistrationDto registrationDto) {
         Account account = Account.builder()
-                .id(accountDtoRequest.getId())
-                .email(accountDtoRequest.getEmail())
-                .first_name(accountDtoRequest.getFirstName())
-                .last_name(accountDtoRequest.getLastName())
-                .password(accountDtoRequest.getPassword())
-                .role(accountDtoRequest.getRole())
+                .id(registrationDto.getUuid())
+                .password(registrationDto.getPassword1())
+                .isDeleted(registrationDto.isDeleted())
+                .email(registrationDto.getEmail())
+                .first_name(registrationDto.getFirstName())
+                .last_name(registrationDto.getLastName())
+                .role(registrationDto.getRole())
                 .build();
 
         accountRepository.save(account);
@@ -111,8 +110,8 @@ public class AccountServiceImpl implements AccountService {
             Account account = mapper.toAccountFromAccountMeDto(accountMeDTO);
             accountRepository.save(account);
 
-            AccountDtoRequest accountDtoRequest = AccountDtoRequest.builder()
-                    .id(account.getId())
+            RegistrationDto accountDtoRequest = RegistrationDto.builder()
+                    .uuid(account.getId())
                     .email(account.getEmail())
                     .role(account.getRole())
                     .build();

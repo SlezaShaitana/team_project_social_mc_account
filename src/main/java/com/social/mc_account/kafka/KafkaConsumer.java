@@ -1,6 +1,6 @@
 package com.social.mc_account.kafka;
 
-import com.social.mc_account.dto.AccountDtoRequest;
+import com.social.mc_account.dto.RegistrationDto;
 import com.social.mc_account.service.AccountServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ public class KafkaConsumer {
     private final AccountServiceImpl service;
 
     @KafkaListener(topics = "registerTopic", groupId = "${spring.kafka.kafkaMessageGroupId}", containerFactory = "kafkaAccountConcurrentKafkaListenerContainerFactory")
-    public void listen(AccountDtoRequest accountDtoRequest) {
+    public void listen(RegistrationDto accountDtoRequest) {
         log.info("Received data: " + accountDtoRequest);
         service.createAccount(accountDtoRequest);
     }

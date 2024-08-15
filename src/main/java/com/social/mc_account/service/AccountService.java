@@ -6,7 +6,7 @@ import java.util.*;
 public interface AccountService {
     AccountDataDTO getDataAccount(String authorization, String email);
     AccountMeDTO updateAccount(AccountMeDTO accountMeDTO);
-    AccountMeDTO createAccount(AccountDtoRequest accountDtoRequest);
+    AccountMeDTO createAccount(RegistrationDto accountDtoRequest);
     AccountMeDTO getDataMyAccount(String authorization);
     AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO);
     void deleteAccount(String authorization) throws InterruptedException;

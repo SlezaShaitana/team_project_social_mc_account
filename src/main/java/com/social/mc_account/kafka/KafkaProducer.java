@@ -1,7 +1,7 @@
 package com.social.mc_account.kafka;
 
 import com.social.mc_account.dto.NotificationDTO;
-import com.social.mc_account.dto.AccountDtoRequest;
+import com.social.mc_account.dto.RegistrationDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,7 +18,7 @@ public class KafkaProducer {
     @Value("${spring.kafka.kafkaMessageTopicForNotification}")
     private String kafkaMessageTopicForNotification;
 
-    public void sendMessageForAuth(AccountDtoRequest data) {
+    public void sendMessageForAuth(RegistrationDto data) {
         kafkaTemplate.send(kafkaMessageTopicForAccount, data);
     }
 

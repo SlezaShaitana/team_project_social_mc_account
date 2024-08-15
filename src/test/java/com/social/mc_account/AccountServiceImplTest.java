@@ -109,8 +109,8 @@ public class AccountServiceImplTest {
                 .update_on(LocalDate.now())
                 .build();
 
-        AccountDtoRequest accountDtoRequest = AccountDtoRequest.builder()
-                .id(updatedAccount.getId())
+        RegistrationDto accountDtoRequest = RegistrationDto.builder()
+                .uuid(updatedAccount.getId())
                 .email(updatedAccount.getEmail())
                 .role(updatedAccount.getRole())
                 .build();
@@ -149,7 +149,7 @@ public class AccountServiceImplTest {
         verify(accountRepository, times(1)).findById(accountId);
         verify(mapper, never()).toAccountFromAccountMeDto(any(AccountMeDTO.class));
         verify(accountRepository, never()).save(any(Account.class));
-        verify(kafkaProducer, never()).sendMessageForAuth(any(AccountDtoRequest.class));
+        verify(kafkaProducer, never()).sendMessageForAuth(any(RegistrationDto.class));
     }
 
     @Test
@@ -159,8 +159,8 @@ public class AccountServiceImplTest {
         String email = "new_account@gmail.com";
         Role role = Role.USER;
 
-        AccountDtoRequest accountDtoRequest = AccountDtoRequest.builder()
-                .id(accountId)
+        RegistrationDto accountDtoRequest = RegistrationDto.builder()
+                .uuid(accountId)
                 .email(email)
                 .role(role)
                 .build();
@@ -270,8 +270,8 @@ public class AccountServiceImplTest {
                 .role(accountMeDTO.getRole())
                 .build();
 
-        AccountDtoRequest accountDtoRequest = AccountDtoRequest.builder()
-                .id(updatedAccount.getId())
+        RegistrationDto accountDtoRequest = RegistrationDto.builder()
+                .uuid(updatedAccount.getId())
                 .email(updatedAccount.getEmail())
                 .role(updatedAccount.getRole())
                 .build();
@@ -318,7 +318,7 @@ public class AccountServiceImplTest {
         verify(accountRepository, times(1)).findById(accountId);
         verify(mapper, never()).toAccountFromAccountMeDto(any(AccountMeDTO.class));
         verify(accountRepository, never()).save(any(Account.class));
-        verify(kafkaProducer, never()).sendMessageForAuth(any(AccountDtoRequest.class));
+        verify(kafkaProducer, never()).sendMessageForAuth(any(RegistrationDto.class));
         verify(mapper, never()).toAccountMeDtoForAccount(any(Account.class));
     }
 
