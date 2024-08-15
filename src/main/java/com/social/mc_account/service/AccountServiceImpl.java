@@ -67,7 +67,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Transactional
-    @Async
     @Override
     public AccountMeDTO createAccount(RegistrationDto registrationDto) {
         Optional<Account> existingAccount = Optional.ofNullable(accountRepository.findByEmail(registrationDto.getEmail()));
