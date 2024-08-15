@@ -19,6 +19,7 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConfiguration {
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
@@ -35,8 +36,8 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> kafkaAccountProducerFactory) {
-        return new KafkaTemplate<>(kafkaAccountProducerFactory);
+    public KafkaTemplate<String, Object> kafkaTemplate() {
+        return new KafkaTemplate<>(kafkaAccountProducerFactory());
     }
 
     @Bean
@@ -44,16 +45,11 @@ public class KafkaConfiguration {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class.getName());
-        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, RegistrationDto.class.getName());
-        config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaMessageGroupId);
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
 
-        Map<String, Object> deserializerConfig = new HashMap<>();
-        deserializerConfig.put(JsonDeserializer.VALUE_DEFAULT_TYPE, RegistrationDto.class.getName());
-        deserializerConfig.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         JsonDeserializer<RegistrationDto> jsonDeserializer = new JsonDeserializer<>(RegistrationDto.class);
-        jsonDeserializer.configure(deserializerConfig, false);
+        jsonDeserializer.addTrustedPackages("*");
+        jsonDeserializer.setRemoveTypeHeaders(false);
 
         ErrorHandlingDeserializer<RegistrationDto> errorHandlingDeserializer =
                 new ErrorHandlingDeserializer<>(jsonDeserializer);
@@ -71,4 +67,3 @@ public class KafkaConfiguration {
         return factory;
     }
 }
-
