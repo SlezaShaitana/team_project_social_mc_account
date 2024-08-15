@@ -18,6 +18,7 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConfiguration {
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
@@ -30,14 +31,13 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public NewTopic NotificationTopic(){
+    public NewTopic notificationTopic(){
         return new NewTopic("notificationTopic", 1, (short) 1);
     }
 
     @Bean
-    public ProducerFactory<String, Object> kafkaAccountProducerFactory(ObjectMapper objectMapper){
+    public ProducerFactory<String, Object> kafkaAccountProducerFactory(){
         Map<String, Object> config = new HashMap<>();
-
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
@@ -53,7 +53,6 @@ public class KafkaConfiguration {
     @Bean
     public ConsumerFactory<String, Object> kafkaAccountConsumerFactory(){
         Map<String, Object> config = new HashMap<>();
-
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
@@ -62,8 +61,6 @@ public class KafkaConfiguration {
 
         return new DefaultKafkaConsumerFactory<>(config);
     }
-
-
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaAccountConcurrentKafkaListenerContainerFactory(){

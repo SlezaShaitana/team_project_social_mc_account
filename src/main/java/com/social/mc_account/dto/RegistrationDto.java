@@ -1,13 +1,18 @@
 package com.social.mc_account.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
-@Data
+@NoArgsConstructor
 @Builder
+@AllArgsConstructor
+@Data
 public class RegistrationDto {
-    private UUID uuid;
+    private UUID uuid = UUID.randomUUID();
     private boolean deleted;
     private String email;
     private String password1;
@@ -15,5 +20,5 @@ public class RegistrationDto {
     private String firstName;
     private String lastName;
     private String captchaSecret;
-    private Role role;
+    private Role role = Role.USER;
 }
