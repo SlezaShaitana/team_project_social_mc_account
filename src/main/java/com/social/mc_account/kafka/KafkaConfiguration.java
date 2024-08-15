@@ -50,6 +50,7 @@ public class KafkaConfiguration {
         JsonDeserializer<RegistrationDto> jsonDeserializer = new JsonDeserializer<>(RegistrationDto.class);
         jsonDeserializer.setRemoveTypeHeaders(false);
         jsonDeserializer.addTrustedPackages("*");
+        jsonDeserializer.setUseTypeMapperForKey(true);
 
         ErrorHandlingDeserializer<RegistrationDto> errorHandlingDeserializer =
                 new ErrorHandlingDeserializer<>(jsonDeserializer);
@@ -61,7 +62,16 @@ public class KafkaConfiguration {
     public ConcurrentKafkaListenerContainerFactory<String, RegistrationDto> kafkaAccountConcurrentKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, RegistrationDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(kafkaAccountConsumerFactory());
-        factory.setCommonErrorHandler(new DefaultErrorHandler(new FixedBackOff(1000L, 3)));
+
+        DefaultErrorHandler errorHandler = new DefaultErrorHandler(
+                (record, exception) -> log.error("Error processing message from topic: {}, partition: {}, offset: {}",
+                        record.topic(), record.partition(), record.offset(), exception),
+                new FixedBackOff(1000L, 3)
+        );
+
+        errorHandler.addNotRetryableExceptions(IllegalArgumentException.class);
+
+        factory.setCommonErrorHandler(errorHandler);
         return factory;
     }
 }

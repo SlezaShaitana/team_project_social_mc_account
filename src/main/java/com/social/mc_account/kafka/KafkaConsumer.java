@@ -16,7 +16,12 @@ public class KafkaConsumer {
 
     @KafkaListener(topics = "registerTopic", groupId = "${spring.kafka.kafkaMessageGroupId}", containerFactory = "kafkaAccountConcurrentKafkaListenerContainerFactory")
     public void listen(RegistrationDto accountDtoRequest) {
-        log.info("Received data: " + accountDtoRequest);
-        service.createAccount(accountDtoRequest);
+        try {
+            log.info("Received data: " + accountDtoRequest);
+            service.createAccount(accountDtoRequest);
+        } catch (Exception e) {
+            log.error("Error processing Kafka message", e);
+            throw e;
+        }
     }
 }
