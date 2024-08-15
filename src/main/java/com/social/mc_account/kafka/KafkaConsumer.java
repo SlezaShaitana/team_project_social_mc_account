@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumer {
     private final AccountServiceImpl service;
 
-    @KafkaListener(topics = "registerTopic", groupId = "${spring.kafka.kafkaMessageGroupId}")
+    @KafkaListener(topics = "registerTopic", groupId = "${spring.kafka.kafkaMessageGroupId}", containerFactory = "kafkaAccountConcurrentKafkaListenerContainerFactory")
     public void listen(AccountDtoRequest accountDtoRequest) {
         log.info("Received data: " + accountDtoRequest);
         service.createAccount(accountDtoRequest);

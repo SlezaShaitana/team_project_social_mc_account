@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.kafka.core.*;
+import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.*;
 import org.apache.kafka.common.serialization.*;
+import org.springframework.util.backoff.FixedBackOff;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +51,7 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public ConsumerFactory<String, Object> kafkaAccountConsumerFactory(ObjectMapper objectMapper){
+    public ConsumerFactory<String, Object> kafkaAccountConsumerFactory(){
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -61,13 +63,13 @@ public class KafkaConfiguration {
         return new DefaultKafkaConsumerFactory<>(config);
     }
 
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaAccountConcurrentKafkaListenerContainerFactory(
-            ConsumerFactory<String, Object> kafkaAccountConsumerFactory
-    ){
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory= new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(kafkaAccountConsumerFactory);
 
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaAccountConcurrentKafkaListenerContainerFactory(){
+        ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(kafkaAccountConsumerFactory());
+        factory.setCommonErrorHandler(new DefaultErrorHandler(new FixedBackOff(1000L, 3)));
         return factory;
     }
 }
