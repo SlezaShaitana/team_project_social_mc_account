@@ -1,6 +1,7 @@
 package com.social.mc_account.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.social.mc_account.dto.RegistrationDto;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -50,21 +51,24 @@ public class KafkaConfiguration {
         return new KafkaTemplate<>(kafkaAccountProducerFactory);
     }
 
+
     @Bean
-    public ConsumerFactory<String, Object> kafkaAccountConsumerFactory(){
+    public ConsumerFactory<String, RegistrationDto> kafkaAccountConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaMessageGroupId);
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, RegistrationDto.class.getName());
         config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaMessageGroupId);
 
         return new DefaultKafkaConsumerFactory<>(config);
     }
 
+
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaAccountConcurrentKafkaListenerContainerFactory(){
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, RegistrationDto> kafkaAccountConcurrentKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, RegistrationDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(kafkaAccountConsumerFactory());
         factory.setCommonErrorHandler(new DefaultErrorHandler(new FixedBackOff(1000L, 3)));
         return factory;
