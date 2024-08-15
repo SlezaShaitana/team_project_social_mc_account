@@ -1,8 +1,6 @@
 package com.social.mc_account.kafka;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.social.mc_account.dto.RegistrationDto;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +46,7 @@ public class KafkaConfiguration {
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
 
         JsonDeserializer<RegistrationDto> jsonDeserializer = new JsonDeserializer<>(RegistrationDto.class);
-
+        jsonDeserializer.setRemoveTypeHeaders(false);
         jsonDeserializer.addTrustedPackages("*");
 
         ErrorHandlingDeserializer<RegistrationDto> errorHandlingDeserializer =
