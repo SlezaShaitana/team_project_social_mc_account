@@ -1,6 +1,7 @@
 package com.social.mc_account.kafka;
 
 import com.social.mc_account.dto.RegistrationDto;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@Slf4j
 public class KafkaConfiguration {
 
     @Value("${spring.kafka.bootstrap-servers}")
@@ -52,9 +54,7 @@ public class KafkaConfiguration {
         ErrorHandlingDeserializer<RegistrationDto> errorHandlingDeserializer =
                 new ErrorHandlingDeserializer<>(jsonDeserializer);
 
-        return new DefaultKafkaConsumerFactory<>(config,
-                new StringDeserializer(),
-                errorHandlingDeserializer);
+        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), errorHandlingDeserializer);
     }
 
     @Bean
