@@ -15,14 +15,10 @@ spring:
     driver-class-name: org.postgresql.Driver
     show-sql: true
     dialect: org.hibernate.dialect.PostgreSQL8Dialect
-    hikari:
-      connection-init-sql: create schema if not exists account
-      connection-timeout: 10000
 
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/changelog-master.xml
-    default-schema: account
 
   kafka:
     bootstrap-servers: localhost:9092
