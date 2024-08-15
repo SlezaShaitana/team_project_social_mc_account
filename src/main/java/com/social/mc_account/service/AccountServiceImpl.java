@@ -74,6 +74,9 @@ public class AccountServiceImpl implements AccountService {
         Account account = Account.builder()
                 .id(accountDtoRequest.getId())
                 .email(accountDtoRequest.getEmail())
+                .first_name(accountDtoRequest.getFirstName())
+                .last_name(accountDtoRequest.getLastName())
+                .password(accountDtoRequest.getPassword())
                 .role(accountDtoRequest.getRole())
                 .build();
 
