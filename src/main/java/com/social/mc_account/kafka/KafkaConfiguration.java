@@ -48,8 +48,8 @@ public class KafkaConfiguration {
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
 
         JsonDeserializer<RegistrationDto> jsonDeserializer = new JsonDeserializer<>(RegistrationDto.class);
+
         jsonDeserializer.addTrustedPackages("*");
-        jsonDeserializer.setRemoveTypeHeaders(false);
 
         ErrorHandlingDeserializer<RegistrationDto> errorHandlingDeserializer =
                 new ErrorHandlingDeserializer<>(jsonDeserializer);
