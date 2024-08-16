@@ -20,6 +20,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -106,7 +108,7 @@ public class AccountServiceImplTest {
                 .last_name(accountMeDTO.getLastName())
                 .email(accountMeDTO.getEmail())
                 .role(accountMeDTO.getRole())
-                .update_on(LocalDate.now())
+                .update_on(LocalDateTime.now())
                 .build();
 
         RegistrationDto accountDtoRequest = RegistrationDto.builder()

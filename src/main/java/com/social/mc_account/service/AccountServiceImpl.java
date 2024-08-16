@@ -51,7 +51,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountMeDTO updateAccount(AccountMeDTO accountMeDTO) {
         Account account = mapper.toAccountFromAccountMeDto(accountMeDTO);
-        account.setUpdate_on(LocalDate.now());
+        account.setUpdate_on(LocalDateTime.now());
         accountRepository.save(account);
 
         RegistrationDto accountDtoRequest = RegistrationDto.builder()
@@ -123,21 +123,35 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> optionalAccount = accountRepository.findById(id);
 
         if (optionalAccount.isPresent()) {
-            Account account = mapper.toAccountFromAccountMeDto(accountMeDTO);
-            accountRepository.save(account);
+            Account existingAccount = optionalAccount.get();
+            Account updatedAccount = mapper.toAccountFromAccountMeDto(accountMeDTO);
+            updatedAccount.setId(id);
 
-            RegistrationDto accountDtoRequest = RegistrationDto.builder()
-                    .uuid(account.getId())
-                    .email(account.getEmail())
-                    .role(account.getRole())
-                    .build();
-            producer.sendMessageForAuth(accountDtoRequest);
+            boolean isEmailOrRoleChanged =
+                    !existingAccount.getEmail().equals(updatedAccount.getEmail()) ||
+                            !existingAccount.getRole().equals(updatedAccount.getRole());
 
-            log.info("The authorize account: {} successfully updated", account);
-            return mapper.toAccountMeDtoForAccount(account);
+            if (!existingAccount.equals(updatedAccount)) {
+                accountRepository.save(updatedAccount);
+
+                if (isEmailOrRoleChanged) {
+                    RegistrationDto accountDtoRequest = RegistrationDto.builder()
+                            .uuid(updatedAccount.getId())
+                            .email(updatedAccount.getEmail())
+                            .role(updatedAccount.getRole())
+                            .build();
+                    producer.sendMessageForAuth(accountDtoRequest);
+                }
+
+                log.info("The authorize account: {} successfully updated", updatedAccount);
+                return mapper.toAccountMeDtoForAccount(updatedAccount);
+            } else {
+                log.info("No changes detected for account: {}", existingAccount);
+                return mapper.toAccountMeDtoForAccount(existingAccount);
+            }
         } else {
-            log.warn("The account with id: {} not updated", id);
-            throw new ResourceNotFoundException("The account with id: " + id + " not updated");
+            log.warn("The account with id: {} not found", id);
+            throw new ResourceNotFoundException("The account with id: " + id + " not found");
         }
     }
 

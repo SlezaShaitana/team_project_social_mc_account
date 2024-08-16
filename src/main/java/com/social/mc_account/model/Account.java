@@ -12,6 +12,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -74,10 +75,10 @@ public class Account {
 
     @CreationTimestamp
     @Column(updatable = false)
-    private LocalDate create_on;
+    private LocalDateTime create_on;
 
     @UpdateTimestamp
-    private LocalDate update_on;
+    private LocalDateTime update_on;
 
     private LocalDate deletion_timestamp;
 

@@ -2,6 +2,8 @@ package com.social.mc_account.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+
+import java.time.LocalDate;
 import java.util.*;
 import java.time.LocalDateTime;
 
@@ -30,13 +32,13 @@ public class AccountMeDTO {
     @JsonProperty("statusCode")
     private String statusCode;
     @JsonProperty("regDate")
-    private Date regDate;
+    private LocalDate regDate;
     @JsonProperty("birthDate")
-    private Date birthDate;
+    private LocalDate birthDate;
     @JsonProperty("messagePermission")
     private String messagePermission;
     @JsonProperty("lastOnlineTime")
-    private Date lastOnlineTime;
+    private LocalDate lastOnlineTime;
     @JsonProperty("online")
     private boolean isOnline;
     @JsonProperty("blocked")
