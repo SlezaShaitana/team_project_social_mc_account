@@ -69,27 +69,33 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public AccountMeDTO createAccount(RegistrationDto registrationDto) {
-        Optional<Account> existingAccount = Optional.ofNullable(accountRepository.findByEmail(registrationDto.getEmail()));
+        try {
+            Optional<Account> existingAccount = Optional.ofNullable(accountRepository.findByEmail(registrationDto.getEmail()));
 
-        if (existingAccount.isPresent()) {
-            throw new IllegalArgumentException("Account with email " + registrationDto.getEmail() + " already exists");
+            if (existingAccount.isPresent()) {
+                log.warn("Account with email {} already exists", registrationDto.getEmail());
+                throw new IllegalArgumentException("Account with email " + registrationDto.getEmail() + " already exists");
+            }
+
+            Account account = Account.builder()
+                    .id(registrationDto.getUuid())
+                    .password(registrationDto.getPassword1())
+                    .isDeleted(registrationDto.isDeleted())
+                    .email(registrationDto.getEmail())
+                    .first_name(registrationDto.getFirstName())
+                    .last_name(registrationDto.getLastName())
+                    .role(registrationDto.getRole())
+                    .build();
+
+            accountRepository.save(account);
+
+            AccountMeDTO accountMeDTO = mapper.toAccountMeDtoForAccount(account);
+            log.info("Account successfully created from Kafka message!");
+            return accountMeDTO;
+        } catch (Exception e) {
+            log.error("Error creating account from RegistrationDto: {}", registrationDto, e);
+            throw e;
         }
-
-        Account account = Account.builder()
-                .id(registrationDto.getUuid())
-                .password(registrationDto.getPassword1())
-                .isDeleted(registrationDto.isDeleted())
-                .email(registrationDto.getEmail())
-                .first_name(registrationDto.getFirstName())
-                .last_name(registrationDto.getLastName())
-                .role(registrationDto.getRole())
-                .build();
-
-        accountRepository.save(account);
-
-        AccountMeDTO accountMeDTO = mapper.toAccountMeDtoForAccount(account);
-        log.info("Account successfully created from Kafka message!");
-        return accountMeDTO;
     }
 
 
@@ -132,7 +138,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    @Async
     public void deleteAccount(String authorization) throws InterruptedException {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalUser = accountRepository.findById(id);
