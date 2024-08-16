@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Data
 public class RegistrationDto {
-    private UUID uuid = UUID.randomUUID();
+    private UUID uuid;
     private boolean deleted;
     private String email;
     private String password1;
@@ -20,5 +20,5 @@ public class RegistrationDto {
     private String firstName;
     private String lastName;
     private String captchaSecret;
-    private Role role = Role.USER;
+    private Role role;
 }
