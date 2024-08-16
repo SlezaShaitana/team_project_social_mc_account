@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 @Builder
 public class AccountMeDTO {
     private UUID id;
-    @JsonProperty("deleted")
+    @JsonProperty(value = "deleted")
     private boolean isDeleted;
-    @JsonProperty("firstName")
+    @JsonProperty(value = "firstName")
     private String firstName;
-    @JsonProperty("lastName")
+    @JsonProperty(value = "lastName")
     private String lastName;
     private String email;
     private String password;
