@@ -66,7 +66,6 @@ public class AccountServiceImpl implements AccountService {
         return accountMeDTO;
     }
 
-    @Transactional
     @Override
     public AccountMeDTO createAccount(RegistrationDto registrationDto) {
         try {
