@@ -128,6 +128,7 @@ public class AccountServiceImpl implements AccountService {
             Account updatedAccount = mapper.toAccountFromAccountMeDto(accountMeDTO);
 
             updatedAccount.setId(id);
+            updatedAccount.setEmail(jwtUtils.getEmail(authorization));
 
             boolean isEmailOrRoleChanged =
                     !existingAccount.getEmail().equals(updatedAccount.getEmail()) ||
