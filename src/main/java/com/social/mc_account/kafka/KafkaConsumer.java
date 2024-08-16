@@ -18,5 +18,6 @@ public class KafkaConsumer {
     public void listen(RegistrationDto accountDtoRequest) {
         log.info("Received data: " + accountDtoRequest);
         service.createAccount(accountDtoRequest);
+
     }
 }
