@@ -84,6 +84,7 @@ public class AccountServiceImpl implements AccountService {
                     .first_name(registrationDto.getFirstName())
                     .last_name(registrationDto.getLastName())
                     .role(registrationDto.getRole())
+                    .reg_date(registrationDto.getReg_date())
                     .build();
 
             accountRepository.save(account);
