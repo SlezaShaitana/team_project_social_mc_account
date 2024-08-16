@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.time.LocalDateTime;
 
@@ -33,9 +32,9 @@ public class AccountMeDTO {
     @JsonProperty("statusCode")
     private String statusCode;
     @JsonProperty("regDate")
-    private ZonedDateTime regDate;
+    private LocalDate regDate;
     @JsonProperty("birthDate")
-    private ZonedDateTime birthDate;
+    private LocalDate birthDate;
     @JsonProperty("messagePermission")
     private String messagePermission;
     @JsonProperty("lastOnlineTime")
@@ -47,9 +46,9 @@ public class AccountMeDTO {
     @JsonProperty("emojiStatus")
     private String emojiStatus;
     @JsonProperty("createdOn")
-    private ZonedDateTime createdOn;
+    private LocalDateTime createdOn;
     @JsonProperty("updatedOn")
-    private ZonedDateTime updatedOn;
+    private LocalDateTime updatedOn;
     @JsonProperty("deletionTimestamp")
-    private ZonedDateTime deletionTimestamp;
+    private LocalDateTime deletionTimestamp;
 }

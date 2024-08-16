@@ -13,7 +13,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
@@ -54,23 +53,23 @@ public class Account {
 
     @CreatedDate
     @Column(updatable = false)
-    private ZonedDateTime reg_date;
+    private LocalDate reg_date;
 
-    private ZonedDateTime birth_date;
+    private LocalDate birth_date;
     private String message_permission;
-    private ZonedDateTime last_online_time;
+    private LocalDate last_online_time;
     private boolean is_online;
     private boolean is_blocked;
     private String emoji_status;
 
     @CreationTimestamp
     @Column(updatable = false)
-    private ZonedDateTime create_on;
+    private LocalDateTime create_on;
 
     @UpdateTimestamp
-    private ZonedDateTime update_on;
+    private LocalDateTime update_on;
 
-    private ZonedDateTime deletion_timestamp;
+    private LocalDate deletion_timestamp;
 
     @Column(nullable = false)
     private boolean isDeleted;
