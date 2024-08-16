@@ -87,6 +87,7 @@ public class AccountServiceImpl implements AccountService {
                     .build();
 
             accountRepository.save(account);
+            log.info("Account saved with UUID: " + account.getId());
 
             AccountMeDTO accountMeDTO = mapper.toAccountMeDtoForAccount(account);
             log.info("Account successfully created from Kafka message!");
@@ -101,16 +102,19 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountMeDTO getDataMyAccount(String authorization) {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
+        log.info("Searching for account with UUID: " + id);
+
         Optional<Account> optionalAccount = accountRepository.findById(id);
 
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            log.info("Thea account data with id: {} has been successfully received", account.getId());
+            log.info("The account data with id: {} has been successfully received", account.getId());
             return mapper.toAccountMeDtoForAccount(account);
         }
-             log.warn("The account with id: {} not found", id);
-            throw new ResourceNotFoundException("The account with id: " + id + " not found");
+        log.warn("The account with id: {} not found", id);
+        throw new ResourceNotFoundException("The account with id: " + id + " not found");
     }
+
 
     @Override
     public AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO) {
