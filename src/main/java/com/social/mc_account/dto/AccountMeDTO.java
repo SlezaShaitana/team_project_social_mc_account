@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.time.LocalDateTime;
 
@@ -13,11 +14,11 @@ import java.time.LocalDateTime;
 @Builder
 public class AccountMeDTO {
     private UUID id;
-    @JsonProperty(value = "deleted")
+    @JsonProperty("deleted")
     private boolean isDeleted;
-    @JsonProperty(value = "firstName")
+    @JsonProperty("firstName")
     private String firstName;
-    @JsonProperty(value = "lastName")
+    @JsonProperty("lastName")
     private String lastName;
     private String email;
     private String password;
@@ -32,9 +33,9 @@ public class AccountMeDTO {
     @JsonProperty("statusCode")
     private String statusCode;
     @JsonProperty("regDate")
-    private LocalDate regDate;
+    private ZonedDateTime regDate;
     @JsonProperty("birthDate")
-    private LocalDate birthDate;
+    private ZonedDateTime birthDate;
     @JsonProperty("messagePermission")
     private String messagePermission;
     @JsonProperty("lastOnlineTime")
@@ -46,12 +47,9 @@ public class AccountMeDTO {
     @JsonProperty("emojiStatus")
     private String emojiStatus;
     @JsonProperty("createdOn")
-    private LocalDateTime createdOn;
+    private ZonedDateTime createdOn;
     @JsonProperty("updatedOn")
-    private LocalDateTime updatedOn;
+    private ZonedDateTime updatedOn;
     @JsonProperty("deletionTimestamp")
-    private LocalDateTime deletionTimestamp;
-
-    public AccountMeDTO(UUID uuid, String mail, String john, String doe, String photoUrl, String aboutMe, Role role, boolean b, boolean b1) {
-    }
+    private ZonedDateTime deletionTimestamp;
 }

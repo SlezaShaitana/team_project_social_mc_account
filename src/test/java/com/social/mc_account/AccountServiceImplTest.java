@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,7 +59,7 @@ public class AccountServiceImplTest {
                 .last_name("App")
                 .password("12345678")
                 .role(Role.USER)
-                .reg_date(LocalDate.now())
+                .reg_date(ZonedDateTime.now())
                 .isDeleted(false)
                 .email(email)
                 .build();
@@ -108,7 +109,7 @@ public class AccountServiceImplTest {
                 .last_name(accountMeDTO.getLastName())
                 .email(accountMeDTO.getEmail())
                 .role(accountMeDTO.getRole())
-                .update_on(LocalDateTime.now())
+                .update_on(ZonedDateTime.now())
                 .build();
 
         RegistrationDto accountDtoRequest = RegistrationDto.builder()
@@ -378,11 +379,11 @@ public class AccountServiceImplTest {
         LocalDate today = LocalDate.now();
         Account account1 = Account.builder()
                 .id(UUID.randomUUID())
-                .birth_date(today)
+                .birth_date(ZonedDateTime.from(today))
                 .build();
         Account account2 = Account.builder()
                 .id(UUID.randomUUID())
-                .birth_date(today)
+                .birth_date(ZonedDateTime.from(today))
                 .build();
 
         List<Account> accounts = Arrays.asList(account1, account2);
@@ -511,10 +512,10 @@ public class AccountServiceImplTest {
         statisticRequestDTO.setLastMonth(lastMonth);
 
         List<Account> accounts = new ArrayList<>();
-        accounts.add(Account.builder().birth_date(birthDate).reg_date(LocalDate.of(2023, 3, 15)).build());
-        accounts.add(Account.builder().birth_date(birthDate).reg_date(LocalDate.of(2023, 7, 20)).build());
-        accounts.add(Account.builder().birth_date(LocalDate.of(1985, 5, 10)).reg_date(LocalDate.of(2022, 12, 25)).build());
-        accounts.add(Account.builder().birth_date(LocalDate.of(1995, 9, 30)).reg_date(LocalDate.of(2023, 5, 10)).build());
+        accounts.add(Account.builder().birth_date(ZonedDateTime.from(birthDate)).reg_date(ZonedDateTime.from(LocalDate.of(2023, 3, 15))).build());
+        accounts.add(Account.builder().birth_date(ZonedDateTime.from(birthDate)).reg_date(ZonedDateTime.from(LocalDate.of(2023, 7, 20))).build());
+        accounts.add(Account.builder().birth_date(ZonedDateTime.from(LocalDate.of(1985, 5, 10))).reg_date(ZonedDateTime.from(LocalDate.of(2022, 12, 25))).build());
+        accounts.add(Account.builder().birth_date(ZonedDateTime.from(LocalDate.of(1995, 9, 30))).reg_date(ZonedDateTime.from(LocalDate.of(2023, 5, 10))).build());
 
         when(accountRepository.findAll()).thenReturn(accounts);
 
@@ -541,8 +542,8 @@ public class AccountServiceImplTest {
         statisticRequestDTO.setLastMonth(lastMonth);
 
         List<Account> accounts = new ArrayList<>();
-        accounts.add(Account.builder().birth_date(LocalDate.of(1985, 5, 10)).reg_date(LocalDate.of(2022, 12, 25)).build());
-        accounts.add(Account.builder().birth_date(LocalDate.of(1995, 9, 30)).reg_date(LocalDate.of(2023, 5, 10)).build());
+        accounts.add(Account.builder().birth_date(ZonedDateTime.from(LocalDate.of(1985, 5, 10))).reg_date(ZonedDateTime.from(LocalDate.of(2022, 12, 25))).build());
+        accounts.add(Account.builder().birth_date(ZonedDateTime.from(LocalDate.of(1995, 9, 30))).reg_date(ZonedDateTime.from(LocalDate.of(2023, 5, 10))).build());
 
         when(accountRepository.findAll()).thenReturn(accounts);
 

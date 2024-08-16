@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Builder
@@ -25,5 +26,5 @@ public class RegistrationDto {
     private String lastName;
     private String captchaSecret;
     private Role role = Role.USER;
-    private LocalDate reg_date;
+    private ZonedDateTime reg_date;
 }

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.Service;
 import java.time.*;
+import java.time.chrono.ChronoZonedDateTime;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -51,7 +52,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountMeDTO updateAccount(AccountMeDTO accountMeDTO) {
         Account account = mapper.toAccountFromAccountMeDto(accountMeDTO);
-        account.setUpdate_on(LocalDateTime.now());
+
+        account.setUpdate_on(ZonedDateTime.now());
+
         accountRepository.save(account);
 
         RegistrationDto accountDtoRequest = RegistrationDto.builder()
@@ -117,7 +120,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
-    @Override
     public AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO) {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalAccount = accountRepository.findById(id);
@@ -125,6 +127,9 @@ public class AccountServiceImpl implements AccountService {
         if (optionalAccount.isPresent()) {
             Account existingAccount = optionalAccount.get();
             Account updatedAccount = mapper.toAccountFromAccountMeDto(accountMeDTO);
+
+
+
             updatedAccount.setId(id);
 
             boolean isEmailOrRoleChanged =
@@ -132,6 +137,7 @@ public class AccountServiceImpl implements AccountService {
                             !existingAccount.getRole().equals(updatedAccount.getRole());
 
             if (!existingAccount.equals(updatedAccount)) {
+                updatedAccount.setUpdate_on(ZonedDateTime.now());
                 accountRepository.save(updatedAccount);
 
                 if (isEmailOrRoleChanged) {
@@ -247,13 +253,13 @@ public class AccountServiceImpl implements AccountService {
         int countPerMonth = 0;
 
         for (Account account : allAccounts) {
-            if (account.getBirth_date() != null && Period.between(account.getBirth_date(), currentDate).getYears() == age) {
+            if (account.getBirth_date() != null && Period.between(LocalDate.from(account.getBirth_date()), currentDate).getYears() == age) {
                 countPerAge++;
             }
 
             if (account.getReg_date() != null &&
-                    !account.getReg_date().isBefore(firstMonth) &&
-                    !account.getReg_date().isAfter(lastMonth)) {
+                    !account.getReg_date().isBefore(ChronoZonedDateTime.from(firstMonth)) &&
+                    !account.getReg_date().isAfter(ChronoZonedDateTime.from(lastMonth))) {
                 countPerMonth++;
             }
         }
