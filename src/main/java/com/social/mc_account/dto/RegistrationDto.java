@@ -20,5 +20,5 @@ public class RegistrationDto {
     private String firstName;
     private String lastName;
     private String captchaSecret;
-    private Role role;
+    private Role role = Role.USER;
 }
