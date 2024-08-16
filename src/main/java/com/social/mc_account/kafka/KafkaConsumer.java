@@ -15,7 +15,7 @@ public class KafkaConsumer {
     private final AccountServiceImpl service;
 
 
-    @KafkaListener(topics = "registerTopic", groupId = "${spring.kafka.kafkaMessageGroupId}", containerFactory = "kafkaAccountConcurrentKafkaListenerContainerFactory")
+    @KafkaListener(topics = "registerTopic", groupId = "${spring.kafka.kafkaMessageGroupId}", containerFactory = "kafkaMessageConcurrentKafkaListenerContainerFactory")
     public void listen(RegistrationDto accountDtoRequest, Acknowledgment ack) {
         log.info("Received data: " + accountDtoRequest);
         service.createAccount(accountDtoRequest);
