@@ -21,10 +21,14 @@ spring:
     change-log: classpath:/db/changelog/changelog-master.xml
 
   kafka:
-    bootstrap-servers: http://79.174.80.200:9092
+    bootstrap-servers: docker-kafka-1:9092
     kafkaMessageTopicForAccount: updateTopic
     kafkaMessageTopicForNotification: NotificationTopic
     kafkaMessageGroupId: account_consumer
+    consumer:
+      bootstrap-servers: docker-kafka-1:9092
+    producer:
+      bootstrap-servers: docker-kafka-1:9092
 
 server:
   port: 8085
