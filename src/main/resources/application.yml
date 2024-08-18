@@ -14,7 +14,7 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
     show-sql: true
-    dialect: org.hibernate.dialect.PostgreSQL8Dialect
+    dialect: org.hibernate.dialect.PostgreSQLDialect
 
   liquibase:
     enabled: true
