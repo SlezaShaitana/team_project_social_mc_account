@@ -21,7 +21,7 @@ spring:
     change-log: classpath:/db/changelog/changelog-master.xml
 
   kafka:
-    bootstrap-servers: docker-kafka-1:9092
+    bootstrap-servers: docker-kafka:9092
     kafkaMessageTopicForAccount: updateTopic
     kafkaMessageTopicForNotification: NotificationTopic
     kafkaMessageGroupId: account_consumer
