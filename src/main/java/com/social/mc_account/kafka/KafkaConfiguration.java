@@ -46,18 +46,20 @@ public class KafkaConfiguration {
     @Bean
     public ConsumerFactory<String, RegistrationDto> kafkaMessageConsumerFactory(ObjectMapper objectMapper) {
         Map<String, Object> config = new HashMap<>();
-
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaMessageGroupId);
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
 
-        config.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 30000);
-        config.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 10000);
+        JsonDeserializer<RegistrationDto> jsonDeserializer = new JsonDeserializer<>(RegistrationDto.class);
+        jsonDeserializer.setRemoveTypeHeaders(false);
+        jsonDeserializer.addTrustedPackages("*");
+        jsonDeserializer.setUseTypeMapperForKey(true);
 
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(objectMapper));
+        ErrorHandlingDeserializer<RegistrationDto> errorHandlingDeserializer =
+                new ErrorHandlingDeserializer<>(jsonDeserializer);
+
+        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), errorHandlingDeserializer);
     }
-
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, RegistrationDto> kafkaMessageConcurrentKafkaListenerContainerFactory(
