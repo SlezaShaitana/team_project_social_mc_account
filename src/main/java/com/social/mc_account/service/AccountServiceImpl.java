@@ -129,6 +129,10 @@ public class AccountServiceImpl implements AccountService {
 
             updatedAccount.setId(id);
             updatedAccount.setEmail(jwtUtils.getEmail(authorization));
+            updatedAccount.setPassword(existingAccount.getPassword());
+            updatedAccount.setRole(existingAccount.getRole());
+            updatedAccount.setDeleted(existingAccount.isDeleted());
+            updatedAccount.setReg_date(existingAccount.getReg_date());
 
             boolean isEmailOrRoleChanged =
                     !existingAccount.getEmail().equals(updatedAccount.getEmail()) ||
