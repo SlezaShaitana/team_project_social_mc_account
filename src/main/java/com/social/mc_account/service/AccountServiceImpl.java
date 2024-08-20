@@ -301,30 +301,15 @@ public class AccountServiceImpl implements AccountService {
         log.info("Page information: page = {}, size = {}, sort = {}", pageDto.getPage(), pageDto.getSize(), pageDto.getSort());
 
         Sort sort = Sort.unsorted();
-        Pageable pageable;
 
-        if (pageDto.getSort() == null || pageDto.getSort().isEmpty()) {
-            log.info("No sort provided, using default sorting");
-            pageable = PageRequest.of(pageDto.getPage(), pageDto.getSize(), sort);
+        Pageable pageable;
+        if (pageDto.getSort() == null) {
+            pageable = PageRequest.of(0, 10, sort);
         } else {
-            log.info("Sort provided: {}", pageDto.getSort());
-            Sort.Order[] orders = pageDto.getSort().stream()
-                    .map(sortOrder -> {
-                        String[] parts = sortOrder.split(":");
-                        String property = parts[0];
-                        Sort.Direction direction = parts.length > 1 ? Sort.Direction.fromString(parts[1]) : Sort.Direction.ASC;
-                        return Sort.Order.by(property).with(direction);
-                    })
-                    .toArray(Sort.Order[]::new);
-            sort = Sort.by(orders);
             pageable = PageRequest.of(pageDto.getPage(), pageDto.getSize(), sort);
         }
 
-        log.info("Pageable created: page = {}, size = {}, sort = {}", pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
-
-        log.info("SearchDTO content: firstName = {}, lastName = {}, city = {}, country = {}, isBlocked = {}, statusCode = {}, ageFrom = {}, ageTo = {}",
-                searchDTO.getFirstName(), searchDTO.getLastName(), searchDTO.getCity(), searchDTO.getCountry(), searchDTO.isBlocked(),
-                searchDTO.getStatusCode(), searchDTO.getAgeFrom(), searchDTO.getAgeTo());
+        log.info("Pageable created: page = {}, size = {}", pageable.getPageNumber(), pageable.getPageSize());
 
         org.springframework.data.domain.Page<Account> accountsPage = accountRepository.findAll(AccountSpecification.findWithFilter(searchDTO), pageable);
 
@@ -336,15 +321,12 @@ public class AccountServiceImpl implements AccountService {
         List<Account> accounts = accountsPage.getContent();
 
         log.info("Number of accounts found: {}", accounts.size());
-
-        accounts.forEach(account ->
-                log.info("Account: id = {}, firstName = {}, lastName = {}", account.getId(), account.getFirst_name(), account.getLast_name()));
+        accounts.forEach(account -> log.info("Account: id = {}, firstName = {}, lastName = {}", account.getId(), account.getFirst_name(), account.getLast_name()));
 
         int totalPages = accountsPage.getTotalPages();
         long totalElements = accountsPage.getTotalElements();
         int numberOfElements = accountsPage.getNumberOfElements();
 
-        // Логирование информации о сортировке
         SortDTO sortDTO = SortDTO.builder()
                 .unsorted(sort.isUnsorted())
                 .sorted(sort.isSorted())
