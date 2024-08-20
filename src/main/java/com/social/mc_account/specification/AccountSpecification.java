@@ -61,7 +61,7 @@ public interface AccountSpecification {
             if (isBlocked == null) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.equal(root.get("isBlocked"), isBlocked);
+            return criteriaBuilder.equal(root.get("is_blocked"), isBlocked);
         };
     }
 
@@ -70,7 +70,7 @@ public interface AccountSpecification {
             if (statusCode == null) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.equal(root.get("statusCode"), statusCode);
+            return criteriaBuilder.equal(root.get("status_code"), statusCode);
         };
     }
 
