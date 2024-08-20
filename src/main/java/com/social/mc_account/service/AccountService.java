@@ -1,6 +1,8 @@
 package com.social.mc_account.service;
 
 import com.social.mc_account.dto.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.*;
 
 public interface AccountService {
@@ -8,7 +10,7 @@ public interface AccountService {
     AccountMeDTO updateAccount(AccountMeDTO accountMeDTO);
     AccountMeDTO createAccount(RegistrationDto accountDtoRequest);
     AccountMeDTO getDataMyAccount(String authorization);
-    AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO);
+    AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO, MultipartFile file);
     void deleteAccount(String authorization) throws InterruptedException;
     void putNotification();
     AccountDataDTO getDataById(UUID id);

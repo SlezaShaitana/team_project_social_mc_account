@@ -4,6 +4,8 @@ import com.social.mc_account.dto.*;
 import com.social.mc_account.service.AccountServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.*;;
 
 @RestController
@@ -34,9 +36,13 @@ public class ApiController {
     }
 
     @PutMapping("/me")
-    public AccountMeDTO updateDataMyAccount(@RequestHeader String authorization, @RequestBody AccountMeDTO accountMeDTO) {
-        return accountService.updateAuthorizeAccount(authorization, accountMeDTO);
+    public AccountMeDTO updateDataMyAccount(
+            @RequestHeader String authorization,
+            @RequestPart("account") AccountMeDTO accountMeDTO,
+            @RequestPart("file") MultipartFile file) {
+        return accountService.updateAuthorizeAccount(authorization, accountMeDTO, file);
     }
+
 
     @DeleteMapping("/me")
     public void deleteMyAccount(@RequestHeader String authorization) throws InterruptedException {

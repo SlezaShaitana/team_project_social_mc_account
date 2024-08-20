@@ -2,6 +2,7 @@ package com.social.mc_account.service;
 
 import com.social.mc_account.dto.*;
 import com.social.mc_account.exception.ResourceNotFoundException;
+import com.social.mc_account.feign.StorageClient;
 import com.social.mc_account.kafka.KafkaProducer;
 import com.social.mc_account.mapper.AccountMapper;
 import com.social.mc_account.model.Account;
@@ -17,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -33,8 +36,11 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountMapper mapper;
     private final JwtUtils jwtUtils;
+    private final StorageClient storageClient;
     private final KafkaProducer producer;
 
+
+    //используется при логине
     @Override
     public AccountDataDTO getDataAccount(String authorization, String email) {
         Account account = accountRepository.findByEmail(email);
@@ -48,6 +54,7 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    //Возможно используется при смене пароля(в случае если я прав - надо переписать метод
     @Override
     public AccountMeDTO updateAccount(AccountMeDTO accountMeDTO) {
         Account account = mapper.toAccountFromAccountMeDto(accountMeDTO);
@@ -68,6 +75,8 @@ public class AccountServiceImpl implements AccountService {
         return accountMeDTO;
     }
 
+
+//Метод точно работает при регистрации пользователя
     @Override
     public AccountMeDTO createAccount(RegistrationDto registrationDto) {
         try {
@@ -102,6 +111,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
+    //работает
     @Override
     public AccountMeDTO getDataMyAccount(String authorization) {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
@@ -119,7 +129,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
-    public AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO) {
+    //работает
+    public AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO, MultipartFile file) {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalAccount = accountRepository.findById(id);
 
@@ -139,6 +150,11 @@ public class AccountServiceImpl implements AccountService {
                             !existingAccount.getRole().equals(updatedAccount.getRole());
 
             if (!existingAccount.equals(updatedAccount)) {
+                if (file != null && !file.isEmpty()) {
+                    String imageUrl = storageClient.pathForImage(file);
+                    updatedAccount.setPhoto(imageUrl);
+                }
+
                 updatedAccount.setUpdate_on(LocalDateTime.now());
                 accountRepository.save(updatedAccount);
 
@@ -151,7 +167,7 @@ public class AccountServiceImpl implements AccountService {
                     producer.sendMessageForAuth(accountDtoRequest);
                 }
 
-                log.info("The authorize account: {} successfully updated", updatedAccount);
+                log.info("The authorized account: {} successfully updated", updatedAccount);
                 return mapper.toAccountMeDtoForAccount(updatedAccount);
             } else {
                 log.info("No changes detected for account: {}", existingAccount);

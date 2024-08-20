@@ -3,6 +3,7 @@ package com.social.mc_account;
 import com.social.mc_account.dto.*;
 import com.social.mc_account.dto.Page;
 import com.social.mc_account.exception.ResourceNotFoundException;
+import com.social.mc_account.feign.StorageClient;
 import com.social.mc_account.kafka.KafkaProducer;
 import com.social.mc_account.mapper.AccountMapper;
 import com.social.mc_account.model.Account;
@@ -27,6 +28,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,6 +38,9 @@ public class AccountServiceImplTest {
 
     @Mock
     private AccountRepository accountRepository;
+
+    @Mock
+    private StorageClient storageClient;
 
     @Mock
     private AccountMapper mapper;
@@ -244,10 +250,13 @@ public class AccountServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test updateAuthorizeAccount when account is found")
+    @DisplayName("Test updateAuthorizeAccount when account is found and image is uploaded")
     public void testUpdateAuthorizeAccount_Found() {
+        // Инициализация тестовых данных
         String authorization = "Bearer some-valid-jwt-token";
         UUID accountId = UUID.randomUUID();
+
+        // DTO с обновленными данными
         AccountMeDTO accountMeDTO = AccountMeDTO.builder()
                 .id(accountId)
                 .firstName("UpdatedName")
@@ -256,40 +265,55 @@ public class AccountServiceImplTest {
                 .role(Role.USER)
                 .build();
 
+        // Существующий аккаунт
         Account existingAccount = Account.builder()
                 .id(accountId)
                 .first_name("OldName")
                 .last_name("OldLastName")
                 .email("old_email@gmail.com")
                 .role(Role.USER)
+                .photo("http://old-url.com/old-image.jpg")
                 .build();
 
+        // Обновленный аккаунт
         Account updatedAccount = Account.builder()
                 .id(accountId)
                 .first_name(accountMeDTO.getFirstName())
                 .last_name(accountMeDTO.getLastName())
-                .email(accountMeDTO.getEmail())
+                .email(accountMeDTO.getEmail()) // Убедитесь, что email установлен правильно
                 .role(accountMeDTO.getRole())
+                .photo("http://image-url.com/image.jpg") // Новый URL изображения
                 .build();
 
+        // Данные для Kafka
         RegistrationDto accountDtoRequest = RegistrationDto.builder()
                 .uuid(updatedAccount.getId())
-                .email(updatedAccount.getEmail())
+                .email(accountMeDTO.getEmail()) // Убедитесь, что email совпадает
                 .role(updatedAccount.getRole())
                 .build();
 
-        when(jwtUtils.getId(authorization)).thenReturn(String.valueOf(UUID.fromString(accountId.toString())));
+        // Мок файла и URL изображения
+        MultipartFile file = mock(MultipartFile.class);
+        String imageUrl = "http://image-url.com/image.jpg";
+
+        // Настройка мока
+        when(jwtUtils.getId(authorization)).thenReturn(String.valueOf(accountId));
         when(accountRepository.findById(accountId)).thenReturn(Optional.of(existingAccount));
         when(mapper.toAccountFromAccountMeDto(accountMeDTO)).thenReturn(updatedAccount);
+        when(storageClient.pathForImage(file)).thenReturn(imageUrl);
         when(accountRepository.save(updatedAccount)).thenReturn(updatedAccount);
         when(mapper.toAccountMeDtoForAccount(updatedAccount)).thenReturn(accountMeDTO);
 
-        AccountMeDTO result = accountService.updateAuthorizeAccount(authorization, accountMeDTO);
+        // Вызов тестируемого метода
+        AccountMeDTO result = accountService.updateAuthorizeAccount(authorization, accountMeDTO, file);
 
+        // Проверки
         assertEquals(accountMeDTO, result);
+        assertEquals(imageUrl, updatedAccount.getPhoto()); // Проверка URL изображения
         verify(jwtUtils, times(1)).getId(authorization);
         verify(accountRepository, times(1)).findById(accountId);
         verify(mapper, times(1)).toAccountFromAccountMeDto(accountMeDTO);
+        verify(storageClient, times(1)).pathForImage(file);
         verify(accountRepository, times(1)).save(updatedAccount);
         verify(kafkaProducer, times(1)).sendMessageForAuth(accountDtoRequest);
         verify(mapper, times(1)).toAccountMeDtoForAccount(updatedAccount);
@@ -308,20 +332,23 @@ public class AccountServiceImplTest {
                 .role(Role.USER)
                 .build();
 
-        when(jwtUtils.getId(authorization)).thenReturn(String.valueOf(UUID.fromString(accountId.toString())));
+        MultipartFile file = mock(MultipartFile.class);
+
+        when(jwtUtils.getId(authorization)).thenReturn(String.valueOf(accountId));
         when(accountRepository.findById(accountId)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            accountService.updateAuthorizeAccount(authorization, accountMeDTO);
+            accountService.updateAuthorizeAccount(authorization, accountMeDTO, file);
         });
 
-        assertEquals("The account with id: " + accountId + " not updated", exception.getMessage());
+        assertEquals("The account with id: " + accountId + " not found", exception.getMessage());
         verify(jwtUtils, times(1)).getId(authorization);
         verify(accountRepository, times(1)).findById(accountId);
         verify(mapper, never()).toAccountFromAccountMeDto(any(AccountMeDTO.class));
         verify(accountRepository, never()).save(any(Account.class));
         verify(kafkaProducer, never()).sendMessageForAuth(any(RegistrationDto.class));
         verify(mapper, never()).toAccountMeDtoForAccount(any(Account.class));
+        verify(storageClient, never()).pathForImage(file);
     }
 
     @Test

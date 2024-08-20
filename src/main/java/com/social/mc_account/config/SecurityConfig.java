@@ -1,8 +1,10 @@
 package com.social.mc_account.config;
+
 import com.social.mc_account.exception.JwtAuthenticationEntryPoint;
 import com.social.mc_account.security.JwtTokenFilter;
-import lombok.*;
-import org.springframework.context.annotation.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,14 +24,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/account/**").authenticated()
+        http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/account/**").authenticated()
                 )
-                .exceptionHandling(configurer -> configurer.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .exceptionHandling(configurer -> configurer
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                )
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
-                .sessionManagement(httpSecuritySessionManagementConfigurer ->
-                        httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }
