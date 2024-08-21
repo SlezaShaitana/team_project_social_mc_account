@@ -319,7 +319,7 @@ public class AccountServiceImplTest {
 
     @Test
     @DisplayName("Test deleteAccount when account is found and softly deleted")
-    public void testDeleteAccount_Found() throws InterruptedException {
+    public void testDeleteAccount_Found() {
         String authorization = "Bearer some-valid-jwt-token";
         UUID accountId = UUID.randomUUID();
 
@@ -347,7 +347,7 @@ public class AccountServiceImplTest {
 
     @Test
     @DisplayName("Test deleteAccount when account is not found")
-    public void testDeleteAccount_NotFound() throws InterruptedException {
+    public void testDeleteAccount_NotFound()  {
         String authorization = "Bearer some-valid-jwt-token";
         UUID accountId = UUID.randomUUID();
 
@@ -524,32 +524,25 @@ public class AccountServiceImplTest {
     @Test
     @DisplayName("Test getStatistic with no matching data")
     public void testGetListAccounts() {
-        // Создаем объект Page с параметрами, имитирующими входные данные с фронтенда
         Page pageDto = new Page();
         pageDto.setPage(0);
         pageDto.setSize(2);
 
-        // Создаем объект SearchDTO с необходимыми фильтрами
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setCity("Moscow");
 
-        // Создаем список тестовых Account объектов, которые должны быть возвращены из репозитория
         List<Account> accounts = Arrays.asList(
                 Account.builder().id(UUID.randomUUID()).email("test1@example.com").city("Moscow").build(),
                 Account.builder().id(UUID.randomUUID()).email("test2@example.com").city("Moscow").build()
         );
 
-        // Важно: изменяем Pageable на соответствие реальной логике метода.
-        Pageable pageable = PageRequest.of(0, 10, Sort.unsorted()); // Вместо использования pageDto.getSize()
+        Pageable pageable = PageRequest.of(0, 10, Sort.unsorted());
         org.springframework.data.domain.Page<Account> page = new PageImpl<>(accounts, pageable, accounts.size());
 
-        // Мокаем вызов метода findAll репозитория, чтобы он возвращал наш Page объект
         when(accountRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
 
-        // Вызываем тестируемый метод
         AccountPageDTO result = accountService.getListAccounts(searchDTO, pageDto);
 
-        // Проверяем результат на корректность
         assertNotNull(result, "Result should not be null");
         assertEquals(2, result.getSize(), "Unexpected number of accounts returned");
         assertEquals(0, result.getNumber(), "Unexpected page number");
