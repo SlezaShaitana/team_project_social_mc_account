@@ -70,7 +70,7 @@ public class ApiController {
     }
 
     @GetMapping("/search")
-    public AccountPageDTO getListAccounts(@RequestParam SearchDTO searchDTO, @RequestParam Page pageable) {
+    public AccountPageDTO getListAccounts(@ModelAttribute SearchDTO searchDTO, @ModelAttribute Page pageable) {
         return accountService.getListAccounts(searchDTO, pageable);
     }
 
