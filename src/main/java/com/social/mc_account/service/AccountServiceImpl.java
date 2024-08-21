@@ -293,9 +293,10 @@ public class AccountServiceImpl implements AccountService {
 
         Sort sort = Sort.unsorted();
 
-        Pageable pageable = PageRequest.of(pageDto.getPage(), pageDto.getSize(), sort);
+        if (pageDto.getSort() == null) {
+            Pageable pageable = PageRequest.of(0, 10, sort);
 
-        log.info("Pageable created: page = {}, size = {}", pageable.getPageNumber(), pageable.getPageSize());
+            log.info("Pageable created: page = {}, size = {}", pageable.getPageNumber(), pageable.getPageSize());
 
         org.springframework.data.domain.Page<Account> accountsPage = accountRepository.findAll(AccountSpecification.findWithFilter(searchDTO), pageable);
 
