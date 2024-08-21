@@ -293,12 +293,7 @@ public class AccountServiceImpl implements AccountService {
 
         Sort sort = Sort.unsorted();
 
-        Pageable pageable;
-        if (pageDto.getSort() == null) {
-            pageable = PageRequest.of(0, 10, sort);
-        } else {
-            pageable = PageRequest.of(pageDto.getPage(), pageDto.getSize(), sort);
-        }
+        Pageable pageable = PageRequest.of(pageDto.getPage(), pageDto.getSize(), sort);
 
         log.info("Pageable created: page = {}, size = {}", pageable.getPageNumber(), pageable.getPageSize());
 
