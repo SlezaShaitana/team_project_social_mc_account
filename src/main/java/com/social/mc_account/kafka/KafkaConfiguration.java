@@ -9,13 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.kafka.core.*;
-import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.*;
 import org.apache.kafka.common.serialization.*;
-import org.springframework.util.backoff.FixedBackOff;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Configuration
 @Slf4j
@@ -23,9 +19,6 @@ public class KafkaConfiguration {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
-
-    @Value("${spring.kafka.kafkaMessageGroupId}")
-    private String kafkaMessageGroupId;
 
     @Bean
     public <T> ProducerFactory<String, T> kafkaMessageProducerFactory(ObjectMapper objectMapper) {

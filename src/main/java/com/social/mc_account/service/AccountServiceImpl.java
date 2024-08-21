@@ -9,23 +9,25 @@ import com.social.mc_account.model.Account;
 import com.social.mc_account.repository.AccountRepository;
 import com.social.mc_account.security.JwtUtils;
 import com.social.mc_account.specification.AccountSpecification;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.*;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.*;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,12 +42,12 @@ public class AccountServiceImpl implements AccountService {
     private final KafkaProducer producer;
 
 
-    //используется при логине
     @Override
     public AccountDataDTO getDataAccount(String authorization, String email) {
         Account account = accountRepository.findByEmail(email);
-        AccountDataDTO accountDataDTO = mapper.toAccountDataDtoFromAccount(account);
+
         if (account != null) {
+            AccountDataDTO accountDataDTO = mapper.toAccountDataDtoFromAccount(account);
             log.info("The account: {} was successfully found by email: {}", account, email);
             return accountDataDTO;
         } else {
@@ -54,7 +56,6 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
-    //Возможно используется при смене пароля(в случае если я прав - надо переписать метод
     @Override
     public AccountMeDTO updateAccount(AccountMeDTO accountMeDTO) {
         Account account = mapper.toAccountFromAccountMeDto(accountMeDTO);
@@ -75,8 +76,6 @@ public class AccountServiceImpl implements AccountService {
         return accountMeDTO;
     }
 
-
-//Метод точно работает при регистрации пользователя
     @Override
     public AccountMeDTO createAccount(RegistrationDto registrationDto) {
         try {
@@ -110,8 +109,6 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
-
-    //работает
     @Override
     public AccountMeDTO getDataMyAccount(String authorization) {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
@@ -128,8 +125,6 @@ public class AccountServiceImpl implements AccountService {
         throw new ResourceNotFoundException("The account with id: " + id + " not found");
     }
 
-
-    //работает
     public AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO, MultipartFile file) {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalAccount = accountRepository.findById(id);
@@ -150,12 +145,14 @@ public class AccountServiceImpl implements AccountService {
                             !existingAccount.getRole().equals(updatedAccount.getRole());
 
             if (!existingAccount.equals(updatedAccount)) {
+
+                updatedAccount.setUpdate_on(LocalDateTime.now());
+
                 if (file != null && !file.isEmpty()) {
                     String imageUrl = storageClient.pathForImage(file);
                     updatedAccount.setPhoto(imageUrl);
                 }
 
-                updatedAccount.setUpdate_on(LocalDateTime.now());
                 accountRepository.save(updatedAccount);
 
                 if (isEmailOrRoleChanged) {
@@ -180,7 +177,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteAccount(String authorization) throws InterruptedException {
+    public void deleteAccount(String authorization) {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalUser = accountRepository.findById(id);
 
@@ -206,26 +203,20 @@ public class AccountServiceImpl implements AccountService {
     public void putNotification() {
         List<NotificationDTO> birthdayDTOs = accountRepository.findAll().stream()
                 .filter(account -> LocalDate.now().equals(account.getBirth_date()))
-                .map(account -> {
-                    NotificationDTO birthdayAccount = NotificationDTO.builder()
-                            .id(UUID.randomUUID())
-                            .authorId(account.getId())
-                            .content("С Днём Рождения!")
-                            .notificationType(NotificationType.BIRTHDAY)
-                            .sentTime(LocalDateTime.now())
-                            .serviceName(MicroServiceName.ACCOUNT)
-                            .eventId(UUID.randomUUID())
-                            .isReaded(false)
-                            .build();
-                    return birthdayAccount;
-                })
-                .collect(Collectors.toList());
+                .map(account -> NotificationDTO.builder()
+                        .id(UUID.randomUUID())
+                        .authorId(account.getId())
+                        .content("С Днём Рождения!")
+                        .notificationType(NotificationType.BIRTHDAY)
+                        .sentTime(LocalDateTime.now())
+                        .serviceName(MicroServiceName.ACCOUNT)
+                        .eventId(UUID.randomUUID())
+                        .isReaded(false)
+                        .build())
+                .toList();
 
-        for (NotificationDTO birthdayDTO : birthdayDTOs) {
-            producer.sendMessageForNotification(birthdayDTO);
-        }
+        birthdayDTOs.forEach(producer::sendMessageForNotification);
     }
-
 
     @Override
     public AccountDataDTO getDataById(UUID id) {
@@ -313,7 +304,7 @@ public class AccountServiceImpl implements AccountService {
 
         org.springframework.data.domain.Page<Account> accountsPage = accountRepository.findAll(AccountSpecification.findWithFilter(searchDTO), pageable);
 
-        if (accountsPage == null) {
+        if (accountsPage.isEmpty()) {
             log.error("AccountsPage is null");
             throw new IllegalStateException("Page cannot be null");
         }

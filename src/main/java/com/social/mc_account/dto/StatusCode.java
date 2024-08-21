@@ -10,5 +10,5 @@ public enum StatusCode {
     NONE,
     WATCHING,
     REJECTING,
-    RECOMMENDATION;
+    RECOMMENDATION
 }
