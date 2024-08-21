@@ -293,67 +293,72 @@ public class AccountServiceImpl implements AccountService {
 
         Sort sort = Sort.unsorted();
 
+        Pageable pageable;
+
         if (pageDto.getSort() == null) {
-            Pageable pageable = PageRequest.of(0, 10, sort);
-
-            log.info("Pageable created: page = {}, size = {}", pageable.getPageNumber(), pageable.getPageSize());
-
-        org.springframework.data.domain.Page<Account> accountsPage = accountRepository.findAll(AccountSpecification.findWithFilter(searchDTO), pageable);
-
-        if (accountsPage.isEmpty()) {
-            log.error("AccountsPage is null");
-            throw new IllegalStateException("Page cannot be null");
+            pageable = PageRequest.of(0, 10, sort);
+        } else {
+            pageable = PageRequest.of(pageDto.getPage(), pageDto.getSize(), sort);
         }
 
-        List<Account> accounts = accountsPage.getContent();
+        log.info("Pageable created: page = {}, size = {}", pageable.getPageNumber(), pageable.getPageSize());
 
-        log.info("Number of accounts found: {}", accounts.size());
-        accounts.forEach(account -> log.info("Account: id = {}, firstName = {}, lastName = {}", account.getId(), account.getFirst_name(), account.getLast_name()));
+            org.springframework.data.domain.Page<Account> accountsPage = accountRepository.findAll(AccountSpecification.findWithFilter(searchDTO), pageable);
 
-        int totalPages = accountsPage.getTotalPages();
-        long totalElements = accountsPage.getTotalElements();
-        int numberOfElements = accountsPage.getNumberOfElements();
+            if (accountsPage.isEmpty()) {
+                log.error("AccountsPage is null");
+                throw new IllegalStateException("Page cannot be null");
+            }
 
-        SortDTO sortDTO = SortDTO.builder()
-                .unsorted(sort.isUnsorted())
-                .sorted(sort.isSorted())
-                .empty(sort.isEmpty())
-                .build();
+            List<Account> accounts = accountsPage.getContent();
 
-        PageableDTO pageableDTO = PageableDTO.builder()
-                .sortDTO(sortDTO)
-                .unpaged(pageable.isUnpaged())
-                .paged(pageable.isPaged())
-                .pageSize(pageable.getPageSize())
-                .pageNumber(pageable.getPageNumber())
-                .offset((int) pageable.getOffset())
-                .build();
+            log.info("Number of accounts found: {}", accounts.size());
+            accounts.forEach(account -> log.info("Account: id = {}, firstName = {}, lastName = {}", account.getId(), account.getFirst_name(), account.getLast_name()));
 
-        boolean isFirst = accountsPage.isFirst();
-        boolean isLast = accountsPage.isLast();
-        int size = accounts.size();
-        int number = accountsPage.getNumber();
-        boolean empty = accountsPage.isEmpty();
+            int totalPages = accountsPage.getTotalPages();
+            long totalElements = accountsPage.getTotalElements();
+            int numberOfElements = accountsPage.getNumberOfElements();
 
-        log.info("Pagination details: totalPages = {}, totalElements = {}, numberOfElements = {}, isFirst = {}, isLast = {}, size = {}, number = {}, empty = {}",
-                totalPages, totalElements, numberOfElements, isFirst, isLast, size, number, empty);
+            SortDTO sortDTO = SortDTO.builder()
+                    .unsorted(sort.isUnsorted())
+                    .sorted(sort.isSorted())
+                    .empty(sort.isEmpty())
+                    .build();
 
-        AccountPageDTO result = AccountPageDTO.builder()
-                .totalElements(totalElements)
-                .totalPages(totalPages)
-                .sortDTO(sortDTO)
-                .numberOfElements(numberOfElements)
-                .pageable(pageableDTO)
-                .first(isFirst)
-                .last(isLast)
-                .size(size)
-                .accountMeDTO(mapper.toAccountsMeDtoForAccounts(accounts))
-                .number(number)
-                .empty(empty)
-                .build();
+            PageableDTO pageableDTO = PageableDTO.builder()
+                    .sortDTO(sortDTO)
+                    .unpaged(pageable.isUnpaged())
+                    .paged(pageable.isPaged())
+                    .pageSize(pageable.getPageSize())
+                    .pageNumber(pageable.getPageNumber())
+                    .offset((int) pageable.getOffset())
+                    .build();
 
-        log.info("AccountPageDTO built: {}", result);
+            boolean isFirst = accountsPage.isFirst();
+            boolean isLast = accountsPage.isLast();
+            int size = accounts.size();
+            int number = accountsPage.getNumber();
+            boolean empty = accountsPage.isEmpty();
 
-        return result;
+            log.info("Pagination details: totalPages = {}, totalElements = {}, numberOfElements = {}, isFirst = {}, isLast = {}, size = {}, number = {}, empty = {}",
+                    totalPages, totalElements, numberOfElements, isFirst, isLast, size, number, empty);
+
+            AccountPageDTO result = AccountPageDTO.builder()
+                    .totalElements(totalElements)
+                    .totalPages(totalPages)
+                    .sortDTO(sortDTO)
+                    .numberOfElements(numberOfElements)
+                    .pageable(pageableDTO)
+                    .first(isFirst)
+                    .last(isLast)
+                    .size(size)
+                    .accountMeDTO(mapper.toAccountsMeDtoForAccounts(accounts))
+                    .number(number)
+                    .empty(empty)
+                    .build();
+
+            log.info("AccountPageDTO built: {}", result);
+
+            return result;
+        }
     }
-}
