@@ -16,7 +16,7 @@ public class AccountPageDTO {
     private boolean first;
     private boolean last;
     private int size;
-    private List<AccountMeDTO> accountMeDTO;
+    private List<AccountMeDTO> content;
     private int number;
     private boolean empty;
 }
