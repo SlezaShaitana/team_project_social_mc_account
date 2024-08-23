@@ -74,7 +74,11 @@ public class ApiController {
                                                   @RequestParam(required = false) List<UUID> ids,
                                                   @RequestParam(required = false) Boolean isDeleted) {
 
-        String author = allParams.get("0").substring(7);
+        String author = null;
+        if (allParams.isEmpty()){
+            author = allParams.get("0").substring(7);
+        }
+
         SearchDTO searchDTO = SearchDTO.builder()
                 .ids(ids)
                 .firstName(author).build();
