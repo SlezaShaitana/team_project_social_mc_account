@@ -1,9 +1,11 @@
 package com.social.mc_account.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import java.util.*;
 
 @Data
+@Builder
 public class SearchDTO {
     private UUID id;
     private boolean isDeleted;

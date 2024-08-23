@@ -70,8 +70,11 @@ public class ApiController {
     }
 
     @GetMapping("/search")
-    public AccountPageDTO getListAccounts(@ModelAttribute SearchDTO searchDTO, @ModelAttribute Page pageable) {
-        return accountService.getListAccounts(searchDTO, pageable);
+    public AccountPageDTO getListAccounts(@RequestParam Map<String, String> allParams,
+                                                  @RequestParam(required = false) Boolean isDeleted) {
+        String author = allParams.get("0").substring(7);
+        SearchDTO searchDTO = SearchDTO.builder().firstName(author).build();
+        return accountService.getListAccounts(searchDTO, new Page());
     }
 
     @GetMapping("/search/statusCode")
