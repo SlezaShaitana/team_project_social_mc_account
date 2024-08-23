@@ -60,18 +60,18 @@ public class AccountServiceImplTest {
         String email = "test@gmail.ru";
         Account account = Account.builder()
                 .id(UUID.randomUUID())
-                .first_name("Tester")
-                .last_name("App")
+                .firstName("Tester")
+                .lastName("App")
                 .password("12345678")
                 .role(Role.USER)
-                .reg_date(LocalDate.now())
+                .regDate(LocalDate.now())
                 .isDeleted(false)
                 .email(email)
                 .build();
 
         AccountDataDTO accountDataDTO = AccountDataDTO.builder()
                 .id(account.getId())
-                .firstName(account.getFirst_name())
+                .firstName(account.getFirstName())
                 .email(account.getEmail())
                 .isDeleted(account.isDeleted())
                 .role(account.getRole().name())
@@ -83,7 +83,7 @@ public class AccountServiceImplTest {
         AccountDataDTO result = accountService.getDataAccount(null, email);
 
         assertEquals(email, result.getEmail());
-        assertEquals(account.getFirst_name(), result.getFirstName());
+        assertEquals(account.getFirstName(), result.getFirstName());
         verify(accountRepository, times(1)).findByEmail(email);
         verify(mapper, times(1)).toAccountDataDtoFromAccount(account);
     }
@@ -102,25 +102,25 @@ public class AccountServiceImplTest {
 
         Account existingAccount = Account.builder()
                 .id(accountId)
-                .first_name("OldName")
-                .last_name("OldLastName")
+                .firstName("OldName")
+                .lastName("OldLastName")
                 .email(email)
                 .password("existingPassword")
                 .role(Role.USER)
                 .isDeleted(false)
-                .reg_date(LocalDate.now().minusDays(30))
+                .regDate(LocalDate.now().minusDays(30))
                 .build();
 
         Account updatedAccount = Account.builder()
                 .id(accountId)
-                .first_name(accountMeDTO.getFirstName())
-                .last_name(accountMeDTO.getLastName())
+                .firstName(accountMeDTO.getFirstName())
+                .lastName(accountMeDTO.getLastName())
                 .email(email)
                 .password(existingAccount.getPassword())
                 .role(existingAccount.getRole())
                 .isDeleted(existingAccount.isDeleted())
-                .reg_date(existingAccount.getReg_date())
-                .update_on(LocalDateTime.now())
+                .regDate(existingAccount.getRegDate())
+                .updateOn(LocalDateTime.now())
                 .build();
 
         AccountMeDTO returnedAccountMeDTO = AccountMeDTO.builder()
@@ -204,8 +204,8 @@ public class AccountServiceImplTest {
         UUID id = UUID.randomUUID();
         Account account = Account.builder()
                 .id(id)
-                .first_name("Test")
-                .last_name("Account")
+                .firstName("Test")
+                .lastName("Account")
                 .email("test@gmail.com")
                 .role(Role.USER)
                 .build();
@@ -266,8 +266,8 @@ public class AccountServiceImplTest {
 
         Account existingAccount = Account.builder()
                 .id(accountId)
-                .first_name("OldName")
-                .last_name("OldLastName")
+                .firstName("OldName")
+                .lastName("OldLastName")
                 .email("old_email@gmail.com")
                 .role(Role.USER)
                 .photo("http://old-url.com/old-image.jpg")
@@ -275,14 +275,13 @@ public class AccountServiceImplTest {
 
         Account updatedAccount = Account.builder()
                 .id(accountId)
-                .first_name(accountMeDTO.getFirstName())
-                .last_name(accountMeDTO.getLastName())
+                .firstName(accountMeDTO.getFirstName())
+                .lastName(accountMeDTO.getLastName())
                 .email(updatedEmail)
                 .role(accountMeDTO.getRole())
                 .photo("http://image-url.com/image.jpg")
                 .build();
 
-        // Данные для Kafka
         RegistrationDto accountDtoRequest = RegistrationDto.builder()
                 .uuid(updatedAccount.getId())
                 .email(updatedEmail)
@@ -293,7 +292,6 @@ public class AccountServiceImplTest {
         //MultipartFile file = mock(MultipartFile.class);
         //String imageUrl = "http://image-url.com/image.jpg";
 
-        // Настройка мока
         when(jwtUtils.getId(authorization)).thenReturn(String.valueOf(accountId));
         when(jwtUtils.getEmail(authorization)).thenReturn(updatedEmail);
         when(accountRepository.findById(accountId)).thenReturn(Optional.of(existingAccount));
@@ -325,8 +323,8 @@ public class AccountServiceImplTest {
 
         Account account = Account.builder()
                 .id(accountId)
-                .first_name("John")
-                .last_name("Doe")
+                .firstName("John")
+                .lastName("Doe")
                 .email("john.doe@example.com")
                 .role(Role.USER)
                 .isDeleted(false)
@@ -371,11 +369,11 @@ public class AccountServiceImplTest {
         LocalDate today = LocalDate.now();
         Account account1 = Account.builder()
                 .id(UUID.randomUUID())
-                .birth_date(today)
+                .birthDate(today)
                 .build();
         Account account2 = Account.builder()
                 .id(UUID.randomUUID())
-                .birth_date(today)
+                .birthDate(today)
                 .build();
 
         List<Account> accounts = Arrays.asList(account1, account2);
@@ -416,8 +414,8 @@ public class AccountServiceImplTest {
         UUID accountId = UUID.randomUUID();
         Account account = Account.builder()
                 .id(accountId)
-                .first_name("John")
-                .last_name("Doe")
+                .firstName("John")
+                .lastName("Doe")
                 .email("john.doe@example.com")
                 .role(Role.USER)
                 .build();
@@ -462,8 +460,8 @@ public class AccountServiceImplTest {
         UUID accountId = UUID.randomUUID();
         Account account = Account.builder()
                 .id(accountId)
-                .first_name("John")
-                .last_name("Doe")
+                .firstName("John")
+                .lastName("Doe")
                 .email("john.doe@example.com")
                 .role(Role.USER)
                 .build();
@@ -505,10 +503,10 @@ public class AccountServiceImplTest {
         statisticRequestDTO.setLastMonth(lastMonth);
 
         List<Account> accounts = new ArrayList<>();
-        accounts.add(Account.builder().birth_date(birthDate).reg_date(LocalDate.of(2023, 3, 15)).build());
-        accounts.add(Account.builder().birth_date(birthDate).reg_date(LocalDate.of(2023, 7, 20)).build());
-        accounts.add(Account.builder().birth_date(LocalDate.of(1985, 5, 10)).reg_date(LocalDate.of(2022, 12, 25)).build());
-        accounts.add(Account.builder().birth_date(LocalDate.of(1995, 9, 30)).reg_date(LocalDate.of(2023, 5, 10)).build());
+        accounts.add(Account.builder().birthDate(birthDate).regDate(LocalDate.of(2023, 3, 15)).build());
+        accounts.add(Account.builder().birthDate(birthDate).regDate(LocalDate.of(2023, 7, 20)).build());
+        accounts.add(Account.builder().birthDate(LocalDate.of(1985, 5, 10)).regDate(LocalDate.of(2022, 12, 25)).build());
+        accounts.add(Account.builder().birthDate(LocalDate.of(1995, 9, 30)).regDate(LocalDate.of(2023, 5, 10)).build());
 
         when(accountRepository.findAll()).thenReturn(accounts);
 

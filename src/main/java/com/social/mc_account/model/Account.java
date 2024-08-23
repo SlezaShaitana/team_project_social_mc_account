@@ -24,11 +24,11 @@ public class Account {
     @Column(unique = true, nullable = false)
     private UUID id;
 
-    @Column(nullable = false)
-    private String first_name;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
 
-    @Column(nullable = false)
-    private String last_name;
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -47,28 +47,35 @@ public class Account {
     private String city;
     private String country;
     @Column(name = "status_code")
-    private String status_code;
+    private String statusCode;
 
     @CreatedDate
-    @Column(updatable = false)
-    private LocalDate reg_date;
+    @Column(name = "reg_date", updatable = false)
+    private LocalDate regDate;
 
-    private LocalDate birth_date;
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+    @Column(name = "message_permission")
     private String message_permission;
-    private LocalDate last_online_time;
-    private boolean is_online;
-    private boolean is_blocked;
-    private String emoji_status;
+    @Column(name = "last_online_time")
+    private LocalDate lastOnlineTime;
+    @Column(name = "is_online")
+    private boolean isOnline;
+    @Column(name = "is_blocked")
+    private boolean isBlocked;
+    @Column(name = "emoji_status")
+    private String emojiStatus;
 
     @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime create_on;
+    @Column(name = "create_on", updatable = false)
+    private LocalDateTime createOn;
 
     @UpdateTimestamp
-    private LocalDateTime update_on;
+    @Column(name = "update_on")
+    private LocalDateTime updateOn;
+    @Column(name = "deletion_timestamp")
+    private LocalDate deletionTimestamp;
 
-    private LocalDate deletion_timestamp;
-
-    @Column(nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
 }

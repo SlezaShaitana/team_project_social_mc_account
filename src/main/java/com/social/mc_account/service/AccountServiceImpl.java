@@ -60,7 +60,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountMeDTO updateAccount(AccountMeDTO accountMeDTO) {
         Account account = mapper.toAccountFromAccountMeDto(accountMeDTO);
 
-        account.setUpdate_on(LocalDateTime.now());
+        account.setUpdateOn(LocalDateTime.now());
 
         accountRepository.save(account);
 
@@ -91,10 +91,10 @@ public class AccountServiceImpl implements AccountService {
                     .password(registrationDto.getPassword1())
                     .isDeleted(registrationDto.isDeleted())
                     .email(registrationDto.getEmail())
-                    .first_name(registrationDto.getFirstName())
-                    .last_name(registrationDto.getLastName())
+                    .firstName(registrationDto.getFirstName())
+                    .lastName(registrationDto.getLastName())
                     .role(registrationDto.getRole())
-                    .reg_date(registrationDto.getReg_date())
+                    .regDate(registrationDto.getReg_date())
                     .build();
 
             accountRepository.save(account);
@@ -138,7 +138,7 @@ public class AccountServiceImpl implements AccountService {
             updatedAccount.setPassword(existingAccount.getPassword());
             updatedAccount.setRole(existingAccount.getRole());
             updatedAccount.setDeleted(existingAccount.isDeleted());
-            updatedAccount.setReg_date(existingAccount.getReg_date());
+            updatedAccount.setRegDate(existingAccount.getRegDate());
 
             boolean isEmailOrRoleChanged =
                     !existingAccount.getEmail().equals(updatedAccount.getEmail()) ||
@@ -146,7 +146,7 @@ public class AccountServiceImpl implements AccountService {
 
             if (!existingAccount.equals(updatedAccount)) {
 
-                updatedAccount.setUpdate_on(LocalDateTime.now());
+                updatedAccount.setUpdateOn(LocalDateTime.now());
 
                 accountRepository.save(updatedAccount);
 
@@ -197,7 +197,7 @@ public class AccountServiceImpl implements AccountService {
     @Scheduled(cron = "0 0 0 * * ?")
     public void putNotification() {
         List<NotificationDTO> birthdayDTOs = accountRepository.findAll().stream()
-                .filter(account -> LocalDate.now().equals(account.getBirth_date()))
+                .filter(account -> LocalDate.now().equals(account.getBirthDate()))
                 .map(account -> NotificationDTO.builder()
                         .id(UUID.randomUUID())
                         .authorId(account.getId())
@@ -258,13 +258,13 @@ public class AccountServiceImpl implements AccountService {
         int countPerMonth = 0;
 
         for (Account account : allAccounts) {
-            if (account.getBirth_date() != null && Period.between(account.getBirth_date(), currentDate).getYears() == age) {
+            if (account.getBirthDate() != null && Period.between(account.getBirthDate(), currentDate).getYears() == age) {
                 countPerAge++;
             }
 
-            if (account.getReg_date() != null &&
-                    !account.getReg_date().isBefore(firstMonth) &&
-                    !account.getReg_date().isAfter(lastMonth)) {
+            if (account.getRegDate() != null &&
+                    !account.getRegDate().isBefore(firstMonth) &&
+                    !account.getRegDate().isAfter(lastMonth)) {
                 countPerMonth++;
             }
         }
@@ -308,7 +308,7 @@ public class AccountServiceImpl implements AccountService {
         List<Account> accounts = accountsPage.getContent();
 
         log.info("Number of accounts found: {}", accounts.size());
-        accounts.forEach(account -> log.info("Account: id = {}, firstName = {}, lastName = {}", account.getId(), account.getFirst_name(), account.getLast_name()));
+        accounts.forEach(account -> log.info("Account: id = {}, firstName = {}, lastName = {}", account.getId(), account.getFirstName(), account.getLastName()));
 
         int totalPages = accountsPage.getTotalPages();
         long totalElements = accountsPage.getTotalElements();
