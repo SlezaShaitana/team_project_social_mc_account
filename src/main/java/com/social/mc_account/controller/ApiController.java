@@ -37,7 +37,7 @@ public class ApiController {
 
     @PutMapping("/me")
     public AccountMeDTO updateDataMyAccount(@RequestHeader String authorization,
-            @RequestBody AccountMeDTO accountMeDTO, @RequestPart("file") MultipartFile file) {
+            @RequestBody AccountMeDTO accountMeDTO) {
         return accountService.updateAuthorizeAccount(authorization, accountMeDTO);
     }
 
