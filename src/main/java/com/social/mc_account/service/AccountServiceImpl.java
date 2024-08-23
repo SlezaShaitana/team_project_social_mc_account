@@ -351,7 +351,7 @@ public class AccountServiceImpl implements AccountService {
                 .first(isFirst)
                 .last(isLast)
                 .size(size)
-                .accountMeDTO(mapper.toAccountsMeDtoForAccounts(accounts))
+                .content(mapper.toAccountsMeDtoForAccounts(accounts))
                 .number(number)
                 .empty(empty)
                 .build();
