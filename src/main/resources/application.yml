@@ -6,7 +6,7 @@ spring:
     generate-ddl: false
     open-in-view: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
 
   datasource:
     url: jdbc:postgresql://postgres_db/mc_account
