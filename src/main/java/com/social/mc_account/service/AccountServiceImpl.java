@@ -219,7 +219,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDataDTO getDataById(UUID id) {
+    public AccountMeDTO getDataById(UUID id) {
         Optional<Account> optionalAccount = accountRepository.findById(id);
         log.info("Searching for account with UUID: " + id);
 

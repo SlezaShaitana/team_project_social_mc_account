@@ -13,7 +13,7 @@ public interface AccountService {
     AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO, MultipartFile file);
     void deleteAccount(String authorization) throws InterruptedException;
     void putNotification();
-    AccountDataDTO getDataById(UUID id);
+    AccountMeDTO getDataById(UUID id);
     void deleteAccountById(UUID id);
     StatisticDTO getStatistic(StatisticRequestDTO statisticRequestDTO);
     AccountPageDTO getListAccounts(SearchDTO searchDTO, Page pageDto);

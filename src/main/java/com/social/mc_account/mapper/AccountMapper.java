@@ -37,17 +37,5 @@ public interface AccountMapper {
     @Mapping(source = "deletionTimestamp", target = "deletion_timestamp")
     Account toAccountFromAccountMeDto(AccountMeDTO accountMeDTO);
     List<AccountMeDTO> toAccountsMeDtoForAccounts(List<Account> accounts);
-    @Mapping(source = "firstName", target = "first_name")
-    @Mapping(source = "lastName", target = "last_name")
-    @Mapping(source = "profileCover", target = "profile_cover")
-    @Mapping(source = "statusCode", target = "status_code")
-    @Mapping(source = "regDate", target = "reg_date")
-    @Mapping(source = "birthDate", target = "birth_date")
-    @Mapping(source = "messagePermission", target = "message_permission")
-    @Mapping(source = "lastOnlineTime", target = "last_online_time")
-    @Mapping(source = "emojiStatus", target = "emoji_status")
-    @Mapping(source = "createdOn", target = "create_on")
-    @Mapping(source = "updatedOn", target = "update_on")
-    @Mapping(source = "deletionTimestamp", target = "deletion_timestamp")
     AccountDataDTO toAccountDataDtoFromAccount(Account account);
 }

@@ -55,7 +55,7 @@ public class ApiController {
     }
 
     @GetMapping("/{id}")
-    public AccountDataDTO getDataMyAccountById(@PathVariable UUID id) {
+    public AccountMeDTO getDataMyAccountById(@PathVariable UUID id) {
         return accountService.getDataById(id);
     }
 
