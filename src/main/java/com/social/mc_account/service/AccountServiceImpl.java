@@ -226,7 +226,7 @@ public class AccountServiceImpl implements AccountService {
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             log.info("The account with id: {} was successfully found", id);
-            return mapper.toAccountDataDtoFromAccount(account);
+            return mapper.toAccountMeDtoForAccount(account);
         }
         log.warn("The account with id: {} not found", id);
         throw new ResourceNotFoundException("The account with id: " + id + " not found");
