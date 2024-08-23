@@ -141,7 +141,7 @@ public class AccountServiceImplTest {
         when(mapper.toAccountMeDtoForAccount(updatedAccount)).thenReturn(returnedAccountMeDTO);
         when(accountRepository.save(any(Account.class))).thenReturn(updatedAccount);
 
-        AccountMeDTO result = accountService.updateAuthorizeAccount(authorization, accountMeDTO);
+        AccountMeDTO result = accountService.updateAuthorizeAccount(authorization, accountMeDTO, file);
 
         assertNotNull(result);
         assertEquals(accountMeDTO.getFirstName(), result.getFirstName());
@@ -288,27 +288,27 @@ public class AccountServiceImplTest {
                 .role(updatedAccount.getRole())
                 .build();
 
-        // Мок файла и URL изображения
-        //MultipartFile file = mock(MultipartFile.class);
-        //String imageUrl = "http://image-url.com/image.jpg";
+
+        MultipartFile file = mock(MultipartFile.class);
+        String imageUrl = "http://image-url.com/image.jpg";
 
         when(jwtUtils.getId(authorization)).thenReturn(String.valueOf(accountId));
         when(jwtUtils.getEmail(authorization)).thenReturn(updatedEmail);
         when(accountRepository.findById(accountId)).thenReturn(Optional.of(existingAccount));
         when(mapper.toAccountFromAccountMeDto(accountMeDTO)).thenReturn(updatedAccount);
-        //when(storageClient.pathForImage(file)).thenReturn(imageUrl);
+        when(storageClient.pathForImage(file)).thenReturn(imageUrl);
         when(accountRepository.save(updatedAccount)).thenReturn(updatedAccount);
         when(mapper.toAccountMeDtoForAccount(updatedAccount)).thenReturn(accountMeDTO);
 
-        AccountMeDTO result = accountService.updateAuthorizeAccount(authorization, accountMeDTO);
+        AccountMeDTO result = accountService.updateAuthorizeAccount(authorization, accountMeDTO, file);
 
         assertEquals(accountMeDTO, result);
-        //assertEquals(imageUrl, updatedAccount.getPhoto());
+        assertEquals(imageUrl, updatedAccount.getPhoto());
         verify(jwtUtils, times(1)).getId(authorization);
         verify(jwtUtils, times(1)).getEmail(authorization);
         verify(accountRepository, times(1)).findById(accountId);
         verify(mapper, times(1)).toAccountFromAccountMeDto(accountMeDTO);
-       // verify(storageClient, times(1)).pathForImage(file);
+        verify(storageClient, times(1)).pathForImage(file);
         verify(accountRepository, times(1)).save(updatedAccount);
         verify(kafkaProducer, times(1)).sendMessageForAuth(accountDtoRequest);
         verify(mapper, times(1)).toAccountMeDtoForAccount(updatedAccount);

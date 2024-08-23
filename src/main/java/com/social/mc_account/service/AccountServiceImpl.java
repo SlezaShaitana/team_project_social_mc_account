@@ -125,7 +125,7 @@ public class AccountServiceImpl implements AccountService {
         throw new ResourceNotFoundException("The account with id: " + id + " not found");
     }
 
-    public AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO) {
+    public AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO, MultipartFile file) {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalAccount = accountRepository.findById(id);
 
@@ -139,6 +139,7 @@ public class AccountServiceImpl implements AccountService {
             updatedAccount.setRole(existingAccount.getRole());
             updatedAccount.setDeleted(existingAccount.isDeleted());
             updatedAccount.setRegDate(existingAccount.getRegDate());
+
 
             boolean isEmailOrRoleChanged =
                     !existingAccount.getEmail().equals(updatedAccount.getEmail()) ||
