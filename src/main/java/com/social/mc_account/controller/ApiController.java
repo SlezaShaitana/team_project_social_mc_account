@@ -36,9 +36,8 @@ public class ApiController {
     }
 
     @PutMapping("/me")
-    public AccountMeDTO updateDataMyAccount(
-            @RequestHeader String authorization,
-            @RequestPart("account") AccountMeDTO accountMeDTO) {
+    public AccountMeDTO updateDataMyAccount(@RequestHeader String authorization,
+            @RequestBody AccountMeDTO accountMeDTO) {
         return accountService.updateAuthorizeAccount(authorization, accountMeDTO);
     }
 

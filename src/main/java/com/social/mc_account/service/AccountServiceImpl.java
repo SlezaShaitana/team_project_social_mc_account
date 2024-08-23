@@ -148,11 +148,6 @@ public class AccountServiceImpl implements AccountService {
 
                 updatedAccount.setUpdate_on(LocalDateTime.now());
 
-/*                if (file != null && !file.isEmpty()) {
-                    String imageUrl = storageClient.pathForImage(file);
-                    updatedAccount.setPhoto(imageUrl);
-                }*/
-
                 accountRepository.save(updatedAccount);
 
                 if (isEmailOrRoleChanged) {
