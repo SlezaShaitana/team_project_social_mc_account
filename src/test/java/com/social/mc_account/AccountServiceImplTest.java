@@ -432,7 +432,7 @@ public class AccountServiceImplTest {
         when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
         when(mapper.toAccountDataDtoFromAccount(account)).thenReturn(accountDataDTO);
 
-        AccountDataDTO result = accountService.getDataById(accountId);
+        AccountMeDTO result = accountService.getDataById(accountId);
 
         assertEquals(accountDataDTO, result);
         verify(accountRepository, times(1)).findById(accountId);
