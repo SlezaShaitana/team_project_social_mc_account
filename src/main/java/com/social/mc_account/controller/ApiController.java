@@ -40,7 +40,7 @@ public class ApiController {
             @RequestHeader String authorization,
             @RequestPart("account") AccountMeDTO accountMeDTO,
             @RequestPart("file") MultipartFile file) {
-        return accountService.updateAuthorizeAccount(authorization, accountMeDTO, file);
+        return accountService.updateAuthorizeAccount(authorization, accountMeDTO);
     }
 
 

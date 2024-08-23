@@ -125,7 +125,7 @@ public class AccountServiceImpl implements AccountService {
         throw new ResourceNotFoundException("The account with id: " + id + " not found");
     }
 
-    public AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO, MultipartFile file) {
+    public AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO) {
         UUID id = UUID.fromString(jwtUtils.getId(authorization));
         Optional<Account> optionalAccount = accountRepository.findById(id);
 
@@ -148,10 +148,10 @@ public class AccountServiceImpl implements AccountService {
 
                 updatedAccount.setUpdate_on(LocalDateTime.now());
 
-                if (file != null && !file.isEmpty()) {
+/*                if (file != null && !file.isEmpty()) {
                     String imageUrl = storageClient.pathForImage(file);
                     updatedAccount.setPhoto(imageUrl);
-                }
+                }*/
 
                 accountRepository.save(updatedAccount);
 
