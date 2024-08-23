@@ -25,7 +25,7 @@ public interface AccountSpecification {
             if (firstName == null) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.equal(root.get("first_name"), firstName);
+            return criteriaBuilder.equal(root.get("firstName"), firstName);
         };
     }
 
@@ -34,7 +34,7 @@ public interface AccountSpecification {
             if (lastName == null) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.equal(root.get("last_name"), lastName);
+            return criteriaBuilder.equal(root.get("lastName"), lastName);
         };
     }
 
@@ -61,7 +61,7 @@ public interface AccountSpecification {
             if (isBlocked == null) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.equal(root.get("is_blocked"), isBlocked);
+            return criteriaBuilder.equal(root.get("isBlocked"), isBlocked);
         };
     }
 
@@ -70,7 +70,7 @@ public interface AccountSpecification {
             if (statusCode == null) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.equal(root.get("status_code"), statusCode);
+            return criteriaBuilder.equal(root.get("statusCode"), statusCode);
         };
     }
 
@@ -82,17 +82,17 @@ public interface AccountSpecification {
                 return criteriaBuilder.conjunction();
             } else if (ageTo == null) {
                 LocalDate birthDateFrom = now.minusYears(ageFrom);
-                return criteriaBuilder.lessThanOrEqualTo(root.get("birth_date"), birthDateFrom);
+                return criteriaBuilder.lessThanOrEqualTo(root.get("birthDate"), birthDateFrom);
             } else if (ageFrom == null) {
                 LocalDate birthDateTo = now.minusYears(ageTo);
-                return criteriaBuilder.greaterThanOrEqualTo(root.get("birth_date"), birthDateTo);
+                return criteriaBuilder.greaterThanOrEqualTo(root.get("birthDate"), birthDateTo);
             }
 
             LocalDate birthDateTo = now.minusYears(ageTo);
             LocalDate birthDateFrom = now.minusYears(ageFrom);
             return criteriaBuilder.and(
-                    criteriaBuilder.lessThanOrEqualTo(root.get("birth_date"), birthDateFrom),
-                    criteriaBuilder.greaterThanOrEqualTo(root.get("birth_date"), birthDateTo)
+                    criteriaBuilder.lessThanOrEqualTo(root.get("birthDate"), birthDateFrom),
+                    criteriaBuilder.greaterThanOrEqualTo(root.get("birthDate"), birthDateTo)
             );
         };
     }
