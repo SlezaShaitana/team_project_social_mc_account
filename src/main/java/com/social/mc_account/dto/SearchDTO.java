@@ -2,10 +2,13 @@ package com.social.mc_account.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.*;
 
 @Data
 @Builder
+@NoArgsConstructor
 public class SearchDTO {
     private UUID id;
     private boolean isDeleted;
