@@ -70,14 +70,11 @@ public class ApiController {
     }
 
     @GetMapping("/search")
-    public AccountPageDTO getListAccounts(@RequestParam Map<String, String> allParams,
-                                                  @RequestParam List<UUID> ids,
+    public AccountPageDTO getListAccounts(@RequestParam(required = false) Map<String, String> allParams,
+                                                  @RequestParam(required = false) List<UUID> ids,
                                                   @RequestParam(required = false) Boolean isDeleted) {
-        String author = null;
-        if (allParams.isEmpty()){
-             author = allParams.get("0").substring(7);
-        }
 
+        String author = allParams.get("0").substring(7);
         SearchDTO searchDTO = SearchDTO.builder()
                 .ids(ids)
                 .firstName(author).build();
