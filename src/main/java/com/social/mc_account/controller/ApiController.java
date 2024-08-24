@@ -2,6 +2,7 @@ package com.social.mc_account.controller;
 
 import com.social.mc_account.dto.*;
 import com.social.mc_account.service.AccountServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,7 +71,19 @@ public class ApiController {
     @GetMapping("/search")
     public AccountPageDTO getListAccounts(@RequestParam(required = false) Map<String, String> allParams,
                                                   @RequestParam(required = false) List<UUID> ids,
-                                                  @RequestParam(required = false) Boolean isDeleted) {
+                                                  @RequestParam(required = false) Boolean isDeleted,
+                                                  @Valid @RequestParam(required = false) Page pageable
+    ) {
+
+        if (pageable == null) {
+            pageable = new Page();
+            pageable.setPage(0);
+            pageable.setSize(10);
+        }
+
+        if (pageable.getSort() == null || pageable.getSort().isEmpty()) {
+            pageable.setSort(List.of("id,asc"));
+        }
 
         String author = null;
         if (allParams.isEmpty()){
@@ -80,7 +93,7 @@ public class ApiController {
         SearchDTO searchDTO = SearchDTO.builder()
                 .ids(ids)
                 .firstName(author).build();
-        return accountService.getListAccounts(searchDTO, new Page());
+        return accountService.getListAccounts(searchDTO, pageable);
     }
 
     @GetMapping("/search/statusCode")

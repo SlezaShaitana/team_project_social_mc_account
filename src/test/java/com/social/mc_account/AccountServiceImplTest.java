@@ -420,22 +420,22 @@ public class AccountServiceImplTest {
                 .role(Role.USER)
                 .build();
 
-        AccountDataDTO accountDataDTO = AccountDataDTO.builder()
+        AccountMeDTO accountMeDTO = AccountMeDTO.builder()
                 .id(accountId)
                 .firstName("John")
                 .lastName("Doe")
                 .email("john.doe@example.com")
-                .role("USER")
+                .role(Role.USER)
                 .build();
 
         when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
-        when(mapper.toAccountDataDtoFromAccount(account)).thenReturn(accountDataDTO);
+        when(mapper.toAccountMeDtoForAccount(account)).thenReturn(accountMeDTO);
 
         AccountMeDTO result = accountService.getDataById(accountId);
 
-        assertEquals(accountDataDTO, result);
+        assertEquals(accountMeDTO, result);
         verify(accountRepository, times(1)).findById(accountId);
-        verify(mapper, times(1)).toAccountDataDtoFromAccount(account);
+        verify(mapper, times(1)).toAccountMeDtoForAccount(account);
     }
 
     @Test
