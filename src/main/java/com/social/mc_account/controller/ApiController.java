@@ -2,6 +2,8 @@ package com.social.mc_account.controller;
 
 import com.social.mc_account.dto.*;
 import com.social.mc_account.service.AccountServiceImpl;
+import com.social.mc_account.utils.UrlParseUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -69,31 +71,17 @@ public class ApiController {
     }
 
     @GetMapping("/search")
-    public AccountPageDTO getListAccounts(@RequestParam(required = false) Map<String, String> allParams,
-                                                  @RequestParam(required = false) List<UUID> ids,
-                                                  @RequestParam(required = false) Boolean isDeleted,
-                                                  @Valid @RequestParam(required = false) Page pageable
+    public AccountPageDTO getListAccounts(@RequestParam(required = false) List<UUID> ids,
+                                          @RequestParam(required = false) Boolean isDeleted,
+                                          @Valid @RequestParam(required = false) Page pageable,
+                                          HttpServletRequest request
     ) {
+        String url = request.getQueryString();
+        Page page = UrlParseUtils.getPageable(url);
 
-        if (pageable == null) {
-            pageable = new Page();
-            pageable.setPage(0);
-            pageable.setSize(25);
-        }
-
-        if (pageable.getSort() == null || pageable.getSort().isEmpty()) {
-            pageable.setSort(List.of("id,asc"));
-        }
-
-        String author = null;
-        if (allParams.isEmpty()){
-            author = allParams.get("0").substring(7);
-        }
-
-        SearchDTO searchDTO = SearchDTO.builder()
-                .ids(ids)
-                .firstName(author).build();
-        return accountService.getListAccounts(searchDTO, pageable);
+        SearchDTO searchDTO = UrlParseUtils.getSearchDTO(url);
+        searchDTO.setIds(ids);
+        return accountService.getListAccounts(searchDTO, page);
     }
 
     @GetMapping("/search/statusCode")
