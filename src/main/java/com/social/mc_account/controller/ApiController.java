@@ -78,7 +78,7 @@ public class ApiController {
         if (pageable == null) {
             pageable = new Page();
             pageable.setPage(0);
-            pageable.setSize(10);
+            pageable.setSize(25);
         }
 
         if (pageable.getSort() == null || pageable.getSort().isEmpty()) {
