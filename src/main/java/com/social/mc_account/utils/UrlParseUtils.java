@@ -3,6 +3,9 @@ package com.social.mc_account.utils;
 import com.social.mc_account.dto.Page;
 import com.social.mc_account.dto.SearchDTO;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 public class UrlParseUtils {
 
     public static Page getPageable(String url) {
@@ -38,7 +41,7 @@ public class UrlParseUtils {
     public static SearchDTO getSearchDTO(String url) {
         SearchDTO searchDTO = new SearchDTO();
 
-        if (url.contains("author%3D")){
+        if (url.contains("author%3D")) {
             int startIndex = url.indexOf("author%3D");
             startIndex += "author%3D".length();
             int endIndex = url.indexOf("&", startIndex);
@@ -47,7 +50,10 @@ public class UrlParseUtils {
                 endIndex = url.length();
             }
 
-            searchDTO.setFirstName(url.substring(startIndex, endIndex));
+            String author = url.substring(startIndex, endIndex);
+            author = URLDecoder.decode(author, StandardCharsets.UTF_8);
+
+            searchDTO.setFirstName(author);
         }
 
         return searchDTO;
