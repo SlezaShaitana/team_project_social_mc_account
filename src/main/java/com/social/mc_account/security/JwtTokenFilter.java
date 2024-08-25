@@ -43,8 +43,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         String requestURI = request.getRequestURI();
 
-        // Если запрос к метрикам Prometheus, то пропускаем его без проверки токена
-        if (requestURI.equals("/prometheus")) {  // Проверьте точный путь, который используется Prometheus
+        if (requestURI.equals("/prometheus") || requestURI.equals("/actuator/prometheus")) {
+            log.info("Skipping JWT validation for URI: {}", requestURI);
             filterChain.doFilter(request, response);
             return;
         }
