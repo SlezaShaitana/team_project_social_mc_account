@@ -45,7 +45,6 @@ public class AccountServiceImpl implements AccountService {
     private final KafkaProducer producer;
 
     private final Counter failedAuthCounter; //кастомные счётчики
-    private final Counter blockedUserCounter;
 
 
     @Override
