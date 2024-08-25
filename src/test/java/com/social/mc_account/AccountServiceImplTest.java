@@ -132,7 +132,7 @@ public class AccountServiceImplTest {
                 .build();
 
         MultipartFile file = mock(MultipartFile.class);
-        when(file.isEmpty()).thenReturn(true);
+        //when(file.isEmpty()).thenReturn(true);
 
         when(jwtUtils.getId(authorization)).thenReturn(accountId.toString());
         when(jwtUtils.getEmail(authorization)).thenReturn(email);

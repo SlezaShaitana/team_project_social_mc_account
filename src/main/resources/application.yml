@@ -41,3 +41,13 @@ eureka:
     fetch-registry: true
   instance:
     hostname: localhost
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 'prometheus'
+  metrics:
+    export:
+      prometheus:
+        enabled: true

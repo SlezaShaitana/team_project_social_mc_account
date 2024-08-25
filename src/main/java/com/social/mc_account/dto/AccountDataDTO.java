@@ -5,6 +5,8 @@ import java.util.*;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AccountDataDTO {
     private UUID id;
     private boolean isDeleted;

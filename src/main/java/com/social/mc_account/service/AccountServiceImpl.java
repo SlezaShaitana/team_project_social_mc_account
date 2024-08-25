@@ -9,6 +9,8 @@ import com.social.mc_account.model.Account;
 import com.social.mc_account.repository.AccountRepository;
 import com.social.mc_account.security.JwtUtils;
 import com.social.mc_account.specification.AccountSpecification;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -36,10 +38,14 @@ import java.util.concurrent.TimeUnit;
 @ConditionalOnProperty(name = "scheduler.enabled", matchIfMissing = true)
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
+    private final MeterRegistry meterRegistry;
     private final AccountMapper mapper;
     private final JwtUtils jwtUtils;
     private final StorageClient storageClient;
     private final KafkaProducer producer;
+
+    private final Counter failedAuthCounter; //кастомные счётчики
+    private final Counter blockedUserCounter;
 
 
     @Override
@@ -52,6 +58,7 @@ public class AccountServiceImpl implements AccountService {
             return accountDataDTO;
         } else {
             log.warn("The account with email: {} not found", email);
+            failedAuthCounter.increment();
             throw new ResourceNotFoundException("The account with email: " + email + " not found");
         }
     }

@@ -78,4 +78,7 @@ public class Account {
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
+
+    public Account(UUID id1, String john, String doe, LocalDate now, LocalDate now1, boolean b) {
+    }
 }
