@@ -25,7 +25,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/prometheus").permitAll()
+                        .requestMatchers("/prometheus").permitAll() // или ваш актуальный путь к метрикам
                         .requestMatchers("/api/v1/account/**").authenticated()
                 )
                 .exceptionHandling(configurer -> configurer

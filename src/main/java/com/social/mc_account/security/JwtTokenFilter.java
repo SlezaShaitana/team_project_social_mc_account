@@ -40,6 +40,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
+
+        String requestURI = request.getRequestURI();
+
+        // Если запрос к метрикам Prometheus, то пропускаем его без проверки токена
+        if (requestURI.equals("/prometheus")) {  // Проверьте точный путь, который используется Prometheus
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             String token = getToken(request);
             log.info("Token: '{}'", token);
@@ -69,6 +78,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
+
         filterChain.doFilter(request, response);
     }
 }
