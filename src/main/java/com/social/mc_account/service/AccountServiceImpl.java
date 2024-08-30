@@ -38,13 +38,13 @@ import java.util.concurrent.TimeUnit;
 @ConditionalOnProperty(name = "scheduler.enabled", matchIfMissing = true)
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
-    private final MeterRegistry meterRegistry;
     private final AccountMapper mapper;
     private final JwtUtils jwtUtils;
     private final StorageClient storageClient;
     private final KafkaProducer producer;
 
     private final Counter failedAuthCounter; //кастомные счётчики
+    private final MeterRegistry meterRegistry;
 
 
     @Override

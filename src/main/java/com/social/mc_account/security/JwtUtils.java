@@ -37,8 +37,13 @@ public class JwtUtils {
                 .build();
 
         Jws<Claims> claimsJws = jwtParser.parseClaimsJws(cleanToken);
-        return claimsJws.getBody();
+        Claims claims = claimsJws.getBody();
+
+        log.info("Claims: {}", claims);
+
+        return claims;
     }
+
 
     public static SecretKey createSecretKey(String secret) {
         byte[] keyBytes = Decoders.BASE64.decode(secret);

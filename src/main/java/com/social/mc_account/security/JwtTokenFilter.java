@@ -56,10 +56,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             if (jwtValidation.validateToken(token)) {
                 String email = jwtUtils.getEmail(token);
                 List<String> roles = jwtUtils.getRoles(token);
-
-                Collection<? extends GrantedAuthority> authorities = roles.stream()
+                
+                Collection<? extends GrantedAuthority> authorities = (roles != null ? roles.stream()
                         .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+                        .collect(Collectors.toList()) : Collections.emptyList());
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         email, null, authorities);
@@ -78,7 +78,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-
         filterChain.doFilter(request, response);
     }
 }
