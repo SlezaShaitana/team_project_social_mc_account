@@ -117,7 +117,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountMeDTO getDataMyAccount(String authorization) {
-        UUID id = UUID.fromString(jwtUtils.getId(authorization));
+        String idStr = jwtUtils.getId(authorization);
+        if (idStr == null || idStr.isEmpty()) {
+            log.error("Invalid UUID string: null or empty for authorization: {}", authorization);
+            throw new IllegalArgumentException("Invalid UUID string: null or empty");
+        }
+        UUID id = UUID.fromString(idStr);
         log.info("Searching for account with UUID: " + id);
 
         Optional<Account> optionalAccount = accountRepository.findById(id);
@@ -126,13 +131,20 @@ public class AccountServiceImpl implements AccountService {
             Account account = optionalAccount.get();
             log.info("The account data with id: {} has been successfully received", account.getId());
             return mapper.toAccountMeDtoForAccount(account);
+        } else {
+            log.warn("The account with id: {} not found", id);
+            throw new ResourceNotFoundException("The account with id: " + id + " not found");
         }
-        log.warn("The account with id: {} not found", id);
-        throw new ResourceNotFoundException("The account with id: " + id + " not found");
     }
 
+
     public AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO) {
-        UUID id = UUID.fromString(jwtUtils.getId(authorization));
+        String idStr = jwtUtils.getId(authorization);
+        if (idStr == null || idStr.isEmpty()) {
+            log.error("Invalid UUID string: null or empty for authorization: {}", authorization);
+            throw new IllegalArgumentException("Invalid UUID string: null or empty");
+        }
+        UUID id = UUID.fromString(idStr);
         Optional<Account> optionalAccount = accountRepository.findById(id);
 
         if (optionalAccount.isPresent()) {
@@ -146,15 +158,12 @@ public class AccountServiceImpl implements AccountService {
             updatedAccount.setDeleted(existingAccount.isDeleted());
             updatedAccount.setRegDate(existingAccount.getRegDate());
 
-
             boolean isEmailOrRoleChanged =
                     !existingAccount.getEmail().equals(updatedAccount.getEmail()) ||
                             !existingAccount.getRole().equals(updatedAccount.getRole());
 
             if (!existingAccount.equals(updatedAccount)) {
-
                 updatedAccount.setUpdateOn(LocalDateTime.now());
-
                 accountRepository.save(updatedAccount);
 
                 if (isEmailOrRoleChanged) {
@@ -178,9 +187,15 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+
     @Override
     public void deleteAccount(String authorization) {
-        UUID id = UUID.fromString(jwtUtils.getId(authorization));
+        String idStr = jwtUtils.getId(authorization);
+        if (idStr == null || idStr.isEmpty()) {
+            log.error("Invalid UUID string: null or empty for authorization: {}", authorization);
+            throw new IllegalArgumentException("Invalid UUID string: null or empty");
+        }
+        UUID id = UUID.fromString(idStr);
         Optional<Account> optionalUser = accountRepository.findById(id);
 
         if (optionalUser.isPresent()) {
@@ -199,6 +214,7 @@ public class AccountServiceImpl implements AccountService {
             throw new ResourceNotFoundException("The account with id: " + id + " not found");
         }
     }
+
 
     @Override
     @Scheduled(cron = "0 0 0 * * ?")
@@ -222,6 +238,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountMeDTO getDataById(UUID id) {
+        if (id == null) {
+            log.error("Invalid UUID: null");
+            throw new IllegalArgumentException("Invalid UUID: null");
+        }
         Optional<Account> optionalAccount = accountRepository.findById(id);
         log.info("Searching for account with UUID: " + id);
 
@@ -229,13 +249,18 @@ public class AccountServiceImpl implements AccountService {
             Account account = optionalAccount.get();
             log.info("The account with id: {} was successfully found", id);
             return mapper.toAccountMeDtoForAccount(account);
+        } else {
+            log.warn("The account with id: {} not found", id);
+            throw new ResourceNotFoundException("The account with id: " + id + " not found");
         }
-        log.warn("The account with id: {} not found", id);
-        throw new ResourceNotFoundException("The account with id: " + id + " not found");
     }
 
     @Override
     public void deleteAccountById(UUID id) {
+        if (id == null) {
+            log.error("Invalid UUID: null");
+            throw new IllegalArgumentException("Invalid UUID: null");
+        }
         Optional<Account> optionalAccount = accountRepository.findById(id);
 
         if (optionalAccount.isPresent()) {
@@ -307,7 +332,7 @@ public class AccountServiceImpl implements AccountService {
 
         org.springframework.data.domain.Page<Account> accountsPage = accountRepository.findAll(AccountSpecification.findWithFilter(searchDTO), pageable);
 
-        if (accountsPage == null) {
+        if (!accountsPage.isEmpty()) {
             log.error("AccountsPage is null");
             throw new IllegalStateException("Page cannot be null");
         }
