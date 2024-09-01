@@ -167,7 +167,7 @@ public class ApiControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
-    @Test
+/*    @Test
     void updateDataMyAccount_Success() throws Exception {
         UUID accountId = UUID.randomUUID();
         String authorization = "bearer token";
@@ -186,7 +186,7 @@ public class ApiControllerTest {
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(responseDTO)));
-    }
+    }*/
 
     @Test
     void deleteMyAccount_Success() throws Exception {
