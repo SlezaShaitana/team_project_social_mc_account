@@ -10,7 +10,7 @@ public interface AccountService {
     AccountMeDTO updateAccount(AccountMeDTO accountMeDTO);
     AccountMeDTO createAccount(RegistrationDto accountDtoRequest);
     AccountMeDTO getDataMyAccount(String authorization);
-    AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO);
+    AccountMeDTO updateAuthorizeAccount(String authorization, AccountMeDTO accountMeDTO, MultipartFile photo, MultipartFile profileCover);
     void deleteAccount(String authorization) throws InterruptedException;
     void putNotification();
     AccountMeDTO getDataById(UUID id);

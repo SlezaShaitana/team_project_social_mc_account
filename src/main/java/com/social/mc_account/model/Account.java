@@ -42,7 +42,8 @@ public class Account {
 
     private String phone;
     private String photo;
-    private String profile_cover;
+    @Column(name = "profile_cover")
+    private String profileCover;
     private String about;
     private String city;
     private String country;

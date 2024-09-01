@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.*;
 
 @RestController
@@ -36,10 +38,14 @@ public class ApiController {
          return accountService.getDataMyAccount(authorization);
     }
 
-    @PutMapping("/me")
-    public AccountMeDTO updateDataMyAccount(@RequestHeader String authorization,
-            @RequestBody AccountMeDTO accountMeDTO) {
-        return accountService.updateAuthorizeAccount(authorization, accountMeDTO);
+    @PutMapping("/update")
+    public AccountMeDTO updateAccount(
+            @RequestHeader("Authorization") String authorization,
+            @RequestPart("account") AccountMeDTO accountMeDTO,
+            @RequestPart(value = "photo", required = false) MultipartFile photo,
+            @RequestPart(value = "profileCover", required = false) MultipartFile profileCover) {
+
+        return accountService.updateAuthorizeAccount(authorization, accountMeDTO, photo, profileCover);
     }
 
 
