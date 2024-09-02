@@ -41,11 +41,9 @@ public class ApiController {
     @PutMapping("/update")
     public AccountMeDTO updateAccount(
             @RequestHeader("Authorization") String authorization,
-            @RequestPart("account") AccountMeDTO accountMeDTO,
-            @RequestPart(value = "photo", required = false) MultipartFile photo,
-            @RequestPart(value = "profileCover", required = false) MultipartFile profileCover) {
+            @RequestPart("account") AccountMeDTO accountMeDTO) {
 
-        return accountService.updateAuthorizeAccount(authorization, accountMeDTO, photo, profileCover);
+        return accountService.updateAuthorizeAccount(authorization, accountMeDTO);
     }
 
 

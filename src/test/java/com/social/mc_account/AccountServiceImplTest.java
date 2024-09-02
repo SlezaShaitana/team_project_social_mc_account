@@ -88,7 +88,7 @@ public class AccountServiceImplTest {
         verify(mapper, times(1)).toAccountDataDtoFromAccount(account);
     }
 
-/*    @Test
+   @Test
     @DisplayName("Test updateAuthorizeAccount")
     public void testUpdateAuthorizeAccount() {
         String authorization = "Bearer mockJwtToken";
@@ -156,7 +156,7 @@ public class AccountServiceImplTest {
         verify(accountRepository, times(1)).save(updatedAccount);
 
         verify(kafkaProducer, never()).sendMessageForAuth(any(RegistrationDto.class));
-    }*/
+    }
 
 
 
@@ -250,7 +250,7 @@ public class AccountServiceImplTest {
         verify(mapper, never()).toAccountMeDtoForAccount(any(Account.class));
     }
 
-/*    @Test
+ @Test
     @DisplayName("Test updateAuthorizeAccount when account is found and image is uploaded")
     public void testUpdateAuthorizeAccount_Found() {
         String authorization = "Bearer some-valid-jwt-token";
@@ -313,7 +313,7 @@ public class AccountServiceImplTest {
         verify(accountRepository, times(1)).save(updatedAccount);
         verify(kafkaProducer, times(1)).sendMessageForAuth(accountDtoRequest);
         verify(mapper, times(1)).toAccountMeDtoForAccount(updatedAccount);
-    }*/
+    }
 
 
     @Test
