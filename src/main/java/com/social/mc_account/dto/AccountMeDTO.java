@@ -1,6 +1,7 @@
 package com.social.mc_account.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -51,4 +52,15 @@ public class AccountMeDTO {
     private LocalDateTime updatedOn;
     @JsonProperty("deletionTimestamp")
     private LocalDateTime deletionTimestamp;
+
+    @JsonSetter("birthDate")
+    public void setBirthDate(String birthDate) {
+        if (!"none".equalsIgnoreCase(birthDate)) {
+            try {
+                this.birthDate = LocalDate.parse(birthDate);
+            } catch (Exception e) {
+                System.err.println("Invalid date format, value ignored: " + birthDate);
+            }
+        }
+    }
 }
