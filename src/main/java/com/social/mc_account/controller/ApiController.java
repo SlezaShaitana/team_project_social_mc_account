@@ -74,8 +74,6 @@ public class ApiController {
 
     @GetMapping("/search")
     public AccountPageDTO getListAccounts(@RequestParam(required = false) List<UUID> ids,
-                                          @RequestParam(required = false) Boolean isDeleted,
-                                          @Valid @RequestParam(required = false) Page pageable,
                                           HttpServletRequest request
     ) {
         String url = request.getQueryString();
