@@ -88,4 +88,13 @@ public class ApiController {
     public AccountPageDTO getListAccountsByStatus(@ModelAttribute SearchDTO searchDTO, @ModelAttribute Page pageable) {
         return accountService.getListAccounts(searchDTO, pageable);
     }
+
+    @GetMapping("/search_by_fullName")
+    public List<UUID> getListIdsByFirstNameAndLastName(@RequestParam String firstName,
+                                                          @RequestParam String lastName){
+        SearchDTO searchDTO = new SearchDTO();
+        searchDTO.setFirstName(firstName);
+        searchDTO.setLastName(lastName);
+        return accountService.getListIdsByFirstNameAndLastName(searchDTO);
+    }
 }

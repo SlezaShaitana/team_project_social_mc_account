@@ -357,4 +357,10 @@ public class AccountServiceImpl implements AccountService {
 
         return result;
     }
+
+    @Override
+    public List<UUID> getListIdsByFirstNameAndLastName(SearchDTO searchDTO) {
+        List<Account> accounts = accountRepository.findAll(AccountSpecification.findWithFilter(searchDTO));
+        return accounts.stream().map(Account::getId).toList();
     }
+}

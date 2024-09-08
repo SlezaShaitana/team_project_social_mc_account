@@ -17,4 +17,5 @@ public interface AccountService {
     void deleteAccountById(UUID id);
     StatisticDTO getStatistic(StatisticRequestDTO statisticRequestDTO);
     AccountPageDTO getListAccounts(SearchDTO searchDTO, Page pageDto);
+    List<UUID> getListIdsByFirstNameAndLastName(SearchDTO searchDTO);
 }
