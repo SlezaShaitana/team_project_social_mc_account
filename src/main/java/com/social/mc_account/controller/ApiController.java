@@ -4,12 +4,11 @@ import com.social.mc_account.dto.*;
 import com.social.mc_account.service.AccountServiceImpl;
 import com.social.mc_account.utils.UrlParseUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "http://79.174.80.200")
@@ -35,7 +34,7 @@ public class ApiController {
 
     @GetMapping("/me")
     public AccountMeDTO getDataMyAccount(@RequestHeader("Authorization") String authorization) {
-         return accountService.getDataMyAccount(authorization);
+        return accountService.getDataMyAccount(authorization);
     }
 
     @PutMapping("/me")
@@ -73,16 +72,21 @@ public class ApiController {
     }
 
     @GetMapping("/search")
-    public AccountPageDTO getListAccounts(@RequestParam(required = false) List<UUID> ids,
-                                          HttpServletRequest request
+    public AccountPageDTO getListAccounts(
+            @RequestParam(required = false) List<UUID> ids,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request
     ) {
         String url = request.getQueryString();
-        Page page = UrlParseUtils.getPageable(url);
+        Page pageDto = new Page(page, size, null);
 
         SearchDTO searchDTO = UrlParseUtils.getSearchDTO(url);
         searchDTO.setIds(ids);
-        return accountService.getListAccounts(searchDTO, page);
+
+        return accountService.getListAccounts(searchDTO, pageDto);
     }
+
 
     @GetMapping("/search/statusCode")
     public AccountPageDTO getListAccountsByStatus(@ModelAttribute SearchDTO searchDTO, @ModelAttribute Page pageable) {
@@ -91,7 +95,7 @@ public class ApiController {
 
     @GetMapping("/search_by_fullName")
     public List<UUID> getListIdsByFirstNameAndLastName(@RequestParam String firstName,
-                                                          @RequestParam String lastName){
+                                                       @RequestParam String lastName) {
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setFirstName(firstName);
         searchDTO.setLastName(lastName);
